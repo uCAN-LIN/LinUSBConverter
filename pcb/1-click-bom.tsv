@@ -1,0 +1,23 @@
+References	Qty	Description
+C1	1	CP1 Small 220p Polarised capacitor C 0603
+C2	1	CP1 Small 1u Polarised capacitor C 0603
+C8	1	C 10n Unpolarized capacitor 0402
+C9, C5, C6, C3, C4	5	C 100n Unpolarized capacitor 0402
+D1, D3	2	D Small ALT SMBD914E6327HTSA1 Diode, small symbol, alternativ symbol SOT-23 ANK
+D2	1	D Schottky Small ALT 1N5819HW-7-F diode, small symbol, alternativ symbol SOD-123
+J1	1	Conn 01x03 Generic connector, single row, Pin Header Straight 1x03 Pitch2.54mm
+J2	1	Conn 01x03 Generic connector, single row, TerminalBlock Altech AK300-3 P5.00mm
+J3	1	GS2 2-pin jumper/solder bridge
+J4	1	USB A Type connector DS1097R
+J5	1	Conn 01x02 Generic connector, single row, Pin Header Straight 1x02 Pitch2.54mm
+P2	1	CONN 01X05 swd smd conn5
+R1	1	R 1k Resistor 0603
+R2	1	R 50 Resistor 0603
+R5, R3	2	R 10k Resistor 0603
+R6, R4, R7, R8	4	R 0 Resistor 0603
+U1	1	TJA1028 HVSON8
+U2	1	MAX12931 SOIC-8-N
+U3	1	MCP1700T-3302E/TT SOT-23
+U4	1	STM32F042C6T6 STM32F042G4U6 UFQFPN 28
+f1, f2	2	fiducial Fiducial 1mm Dia 2.54mm Outer CopperTop
+mh1	1	fiducial 1pin

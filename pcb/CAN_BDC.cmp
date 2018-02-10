@@ -1,0 +1,283 @@
+Cmp-Mod V01 Created by PcbNew   date = 2016-10-28 14:22:33
+
+BeginCmp
+TimeStamp = 58053628
+Path = /580551BA
+Reference = U4;
+ValeurCmp = STM32F042G4U6;
+IdModule  = usb_ccb_custom:UFQFPN_28;
+EndCmp
+
+BeginCmp
+TimeStamp = 580A0674
+Path = /580A104F
+Reference = R3;
+ValeurCmp = 3,9k;
+IdModule  = Resistors_SMD:R_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = 580A065C
+Path = /580A10DB
+Reference = R1;
+ValeurCmp = 2,2k;
+IdModule  = Resistors_SMD:R_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = 5808C420
+Path = /58092B66
+Reference = U3;
+ValeurCmp = POLOLU_A4988;
+IdModule  = usb_ccb_custom:POLOLU_A4988;
+EndCmp
+
+BeginCmp
+TimeStamp = 580A09B0
+Path = /580A3FAE
+Reference = D1;
+ValeurCmp = 1N5819;
+IdModule  = Resistors_SMD:R_1206;
+EndCmp
+
+BeginCmp
+TimeStamp = 580E076C
+Path = /580A49F4
+Reference = C7;
+ValeurCmp = 100u;
+IdModule  = Capacitors_SMD:c_elec_5x5.8;
+EndCmp
+
+BeginCmp
+TimeStamp = 580A078D
+Path = /580A1C71
+Reference = C5;
+ValeurCmp = 470p;
+IdModule  = Capacitors_SMD:C_0805;
+EndCmp
+
+BeginCmp
+TimeStamp = 580E0684
+Path = /580A35D2
+Reference = C6;
+ValeurCmp = 330u;
+IdModule  = Capacitors_SMD:c_elec_6.3x7.7;
+EndCmp
+
+BeginCmp
+TimeStamp = 580A09C8
+Path = /580A435C
+Reference = L2;
+ValeurCmp = 1uH;
+IdModule  = Resistors_SMD:R_0805;
+EndCmp
+
+BeginCmp
+TimeStamp = 580A4FF9
+Path = /580A4599
+Reference = L1;
+ValeurCmp = 220uH;
+IdModule  = usb_ccb_custom:DE0704_Coil_2;
+EndCmp
+
+BeginCmp
+TimeStamp = 580A0668
+Path = /580A0C66
+Reference = R2;
+ValeurCmp = 0.33;
+IdModule  = Resistors_SMD:R_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = 580A0675
+Path = /580A02EB
+Reference = U5;
+ValeurCmp = MC33063;
+IdModule  = usb_ccb_custom:SOIC-8;
+EndCmp
+
+BeginCmp
+TimeStamp = 580F4A31
+Path = /580F5FDB
+Reference = R6;
+ValeurCmp = 0;
+IdModule  = Resistors_SMD:R_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = 5808C719
+Path = /58089FEF
+Reference = P7;
+ValeurCmp = CONN_01X04;
+IdModule  = Pin_Headers:Pin_Header_Straight_1x04;
+EndCmp
+
+BeginCmp
+TimeStamp = 5805411B
+Path = /57FD69A3
+Reference = P4;
+ValeurCmp = CONN_01X02;
+IdModule  = Pin_Headers:Pin_Header_Straight_1x02_Pitch2.00mm;
+EndCmp
+
+BeginCmp
+TimeStamp = 57FB8FB2
+Path = /5708B5D9
+Reference = C1;
+ValeurCmp = 100n;
+IdModule  = Capacitors_SMD:C_0402;
+EndCmp
+
+BeginCmp
+TimeStamp = 57FB8FC1
+Path = /5708AC0C
+Reference = C2;
+ValeurCmp = 10n;
+IdModule  = Capacitors_SMD:C_0402;
+EndCmp
+
+BeginCmp
+TimeStamp = 57FB901B
+Path = /5706EB05
+Reference = C8;
+ValeurCmp = 10nC;
+IdModule  = Capacitors_SMD:C_0402;
+EndCmp
+
+BeginCmp
+TimeStamp = 57FB902A
+Path = /5706ED0B
+Reference = C9;
+ValeurCmp = 100nC;
+IdModule  = Capacitors_SMD:C_0402;
+EndCmp
+
+BeginCmp
+TimeStamp = 57FB9069
+Path = /5705676D
+Reference = R5;
+ValeurCmp = 10k;
+IdModule  = Resistors_SMD:R_0402;
+EndCmp
+
+BeginCmp
+TimeStamp = 58052A18
+Path = /57800591
+Reference = P2;
+ValeurCmp = CONN_01X05;
+IdModule  = usb_ccb_custom:swd_smd_conn5;
+EndCmp
+
+BeginCmp
+TimeStamp = 58052A44
+Path = /5708D55A
+Reference = U1;
+ValeurCmp = PSD2CAN;
+IdModule  = TO_SOT_Packages_SMD:SOT-23;
+EndCmp
+
+BeginCmp
+TimeStamp = 58052A53
+Path = /57081903
+Reference = U2;
+ValeurCmp = SN65HVD232D;
+IdModule  = SO:SO;
+EndCmp
+
+BeginCmp
+TimeStamp = 580540FD
+Path = /57F945E1
+Reference = P1;
+ValeurCmp = CONN_01X02;
+IdModule  = Pin_Headers:Pin_Header_Straight_1x02_Pitch2.00mm;
+EndCmp
+
+BeginCmp
+TimeStamp = 5805410C
+Path = /57FD66CE
+Reference = P3;
+ValeurCmp = CONN_01X02;
+IdModule  = Pin_Headers:Pin_Header_Straight_1x02_Pitch2.00mm;
+EndCmp
+
+BeginCmp
+TimeStamp = 5805412A
+Path = /58059EA3
+Reference = P5;
+ValeurCmp = CONN_01X02;
+IdModule  = Pin_Headers:Pin_Header_Straight_1x02_Pitch2.00mm;
+EndCmp
+
+BeginCmp
+TimeStamp = 5808CC7E
+Path = /5808CF81
+Reference = P6;
+ValeurCmp = CONN_01X02;
+IdModule  = Pin_Headers:Pin_Header_Straight_1x02_Pitch2.00mm;
+EndCmp
+
+BeginCmp
+TimeStamp = 580A8B8C
+Path = /5808CC67
+Reference = C4;
+ValeurCmp = 100u;
+IdModule  = Capacitors_SMD:c_elec_6.3x7.7;
+EndCmp
+
+BeginCmp
+TimeStamp = 580DF524
+Path = /580E2D4A
+Reference = R4;
+ValeurCmp = 120;
+IdModule  = Resistors_SMD:R_0402;
+EndCmp
+
+BeginCmp
+TimeStamp = 580F54A4
+Path = /580FE1FB
+Reference = P8;
+ValeurCmp = CONN_01X01;
+IdModule  = usb_ccb_custom:smd1Conn;
+EndCmp
+
+BeginCmp
+TimeStamp = 5811A185
+Path = /5811B03C
+Reference = f1;
+ValeurCmp = fiducial;
+IdModule  = Fiducials:Fiducial_1mm_Dia_2.54mm_Outer_CopperTop;
+EndCmp
+
+BeginCmp
+TimeStamp = 5811A18B
+Path = /5811B0A8
+Reference = f2;
+ValeurCmp = fiducial;
+IdModule  = Fiducials:Fiducial_1mm_Dia_2.54mm_Outer_CopperTop;
+EndCmp
+
+BeginCmp
+TimeStamp = 5811A191
+Path = /5811B18F
+Reference = f3;
+ValeurCmp = fiducial;
+IdModule  = Fiducials:Fiducial_1mm_Dia_2.54mm_Outer_CopperBottom;
+EndCmp
+
+BeginCmp
+TimeStamp = 5811A197
+Path = /5811BB91
+Reference = f4;
+ValeurCmp = fiducial;
+IdModule  = Fiducials:Fiducial_1mm_Dia_2.54mm_Outer_CopperBottom;
+EndCmp
+
+BeginCmp
+TimeStamp = 5811A765
+Path = /5811CB7A
+Reference = P9;
+ValeurCmp = CONN_01X02;
+IdModule  = Pin_Headers:Pin_Header_Straight_1x02_Pitch2.00mm;
+EndCmp
+
+EndListe

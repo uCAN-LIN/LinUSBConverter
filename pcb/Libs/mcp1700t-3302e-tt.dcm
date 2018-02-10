@@ -1,0 +1,20 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP MCP1700T-3302E/TT
+D Linear Regulator +3.3V
+K POWER REGUL
+$ENDCMP
+#
+$CMP PSD2CAN
+D pesd2can
+$ENDCMP
+#
+$CMP SN65HVD232D
+D CAN Bus Transceiver
+$ENDCMP
+#
+$CMP USBLC6-2
+D CAN Bus Transceiver
+$ENDCMP
+#
+#End Doc Library

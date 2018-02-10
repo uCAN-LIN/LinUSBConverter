@@ -1,0 +1,4 @@
+(fp_lib_table
+  (lib (name SO)(type Legacy)(uri "$(KIPRJMOD)\\Libs\\SO.mod")(options "")(descr ""))
+  (lib (name usb_ccb_custom)(type KiCad)(uri "$(KIPRJMOD)\\usb_ccb_custom.pretty")(options "")(descr ""))
+)
