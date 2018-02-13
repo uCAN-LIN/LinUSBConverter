@@ -27,7 +27,7 @@ void slcanClose();
 uint8_t slcanReciveCanFrame(open_lin_frame_slot_t *pRxMsg);
 int slCanProccesInput(uint8_t ch);
 void slCanCheckCommand();
-void slCanHandler(void);
+void slCanHandler(uint8_t time_passed_ms);
 
 uint8_t parseHex(uint8_t* line, uint8_t len, uint32_t* value) ;
 

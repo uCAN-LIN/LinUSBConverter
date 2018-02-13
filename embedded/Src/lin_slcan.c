@@ -86,7 +86,6 @@ uint8_t addLinMasterRow(uint8_t* line) {
     return 1;
 }
 
-
 static t_open_lin_slave_state slcan_lin_slave_state;
 static l_u8 slcan_lin_slave_state_data_count;
 static uint8_t slcan_lin_data_array[9];

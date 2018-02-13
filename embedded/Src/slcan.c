@@ -71,12 +71,12 @@ static void slcanOutputFlush(void)
     sl_frame_len = 0;
 }
 
-void slCanHandler(void)
+void slCanHandler(uint8_t time_passed_ms)
 {
     if (slcan_state == SLCAN_STATE_OPEN)
     {
         if (lin_type == LIN_MASTER)
-        	open_lin_master_dl_handler(10);
+        	open_lin_master_dl_handler(time_passed_ms);
     }
 }
 

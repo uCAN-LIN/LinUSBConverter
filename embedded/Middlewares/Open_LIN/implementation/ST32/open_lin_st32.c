@@ -38,18 +38,29 @@ void open_lin_hw_reset(void) {
 
 }
 
-l_bool open_lin_hw_tx_break(void){
-	HAL_LIN_SendBreak(&huart1);
+l_bool open_lin_hw_tx_byte(l_u8 byte){
 
-	return true;
+	if (HAL_UART_Transmit(&huart1,&byte,1,1000) == HAL_OK)
+		return true;
+	return false;
+}
+
+l_bool open_lin_hw_tx_break(void){
+
+	if (HAL_LIN_SendBreak(&huart1) == HAL_OK)
+		return true;
+	return false;
 }
 
 l_bool open_lin_hw_tx_data(l_u8* data, l_u8 len)
 {
-	HAL_UART_Transmit(&huart1,data,len,1000);
+	if (HAL_UART_Transmit(&huart1,data,len,1000))
+		return true;
+	else
+		return false;
 //	add buffers to use
 //	HAL_UART_Transmit_IT(huart1,data,len);
-	return true;
+
 }
 
 void open_lin_on_rx_frame(open_lin_frame_slot_t *slot)

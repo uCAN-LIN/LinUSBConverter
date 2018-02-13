@@ -52,6 +52,7 @@
 #include "usb_device.h"
 
 /* USER CODE BEGIN Includes */
+#include "slcan.h"
 
 /* USER CODE END Includes */
 
@@ -113,6 +114,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  slCanCheckCommand();
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */

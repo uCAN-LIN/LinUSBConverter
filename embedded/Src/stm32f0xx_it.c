@@ -116,6 +116,7 @@ void SysTick_Handler(void)
   HAL_IncTick();
   HAL_SYSTICK_IRQHandler();
   /* USER CODE BEGIN SysTick_IRQn 1 */
+  slCanHandler(1);
 
   if ((slcan_lin_timeout_counter != 0) && (slcan_lin_timeout_counter - HAL_GetTick() > 3))
   {
