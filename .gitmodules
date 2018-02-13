@@ -1,0 +1,3 @@
+[submodule "embedded/Middlewares/open-LIN-c"]
+	path = embedded/Middlewares/open-LIN-c
+	url = https://github.com/open-LIN/open-LIN-c.git
