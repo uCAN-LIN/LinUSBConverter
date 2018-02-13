@@ -1,2 +1,1 @@
-# CBDCD_PCB
-Printed circuit board for CanBrushedDCDriver
+Printed circuit board for LinUSBConverter. Project is made in KiCad.
