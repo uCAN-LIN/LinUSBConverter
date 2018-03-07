@@ -19,3 +19,5 @@ _autosave-*
 *.xml
 *.csv
 ~$BOM.xlsx
+
+rescue-backup
