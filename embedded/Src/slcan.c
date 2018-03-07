@@ -19,10 +19,10 @@
 #define SLCAN_CR 13
 #define SLCAN_LR 10
 
-const int32_t serialNumber = 5;
+extern int32_t serialNumber;
 
 uint8_t slcan_state = SLCAN_STATE_OPEN;
-LinType_t lin_type = LIN_MASTER;
+LinType_t lin_type = LIN_SLAVE;
 static uint8_t terminator = SLCAN_CR;
 
 extern USBD_HandleTypeDef hUsbDeviceFS;

@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name LIN_USB_CONVERTER-rescue)(type Legacy)(uri ${KIPRJMOD}/LIN_USB_CONVERTER-rescue.lib)(options "")(descr ""))
+)
