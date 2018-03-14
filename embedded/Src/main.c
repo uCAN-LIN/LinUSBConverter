@@ -52,6 +52,7 @@
 
 /* USER CODE BEGIN Includes */
 #include "slcan.h"
+#include "lin_slcan.h"
 
 /* USER CODE END Includes */
 
@@ -74,7 +75,9 @@ static void MX_USART1_UART_Init(void);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
-
+uint32_t serialNumber =0;
+uint8_t Uart2RxFifo;
+#define UART_RX_FIFO_SIZE 1
 /* USER CODE END 0 */
 
 /**
@@ -109,7 +112,9 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
-
+  HAL_UART_Receive_IT(&huart1, &Uart2RxFifo, UART_RX_FIFO_SIZE);
+//  HAL_NVIC_SetPriority(USART1_IRQn, 2, 0);
+  NVIC_EnableIRQ(USART1_IRQn);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -144,7 +149,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+//    _Error_Handler(__FILE__, __LINE__);
   }
 
     /**Initializes the CPU, AHB and APB busses clocks 
@@ -157,7 +162,7 @@ void SystemClock_Config(void)
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+//    _Error_Handler(__FILE__, __LINE__);
   }
 
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USB|RCC_PERIPHCLK_USART1;
@@ -166,7 +171,7 @@ void SystemClock_Config(void)
 
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+//    _Error_Handler(__FILE__, __LINE__);
   }
 
     /**Configure the Systick interrupt time 
@@ -194,12 +199,10 @@ static void MX_USART1_UART_Init(void)
   huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
   huart1.Init.OverSampling = UART_OVERSAMPLING_16;
   huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-  huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_AUTOBAUDRATE_INIT;
-  huart1.AdvancedInit.AutoBaudRateEnable = UART_ADVFEATURE_AUTOBAUDRATE_ENABLE;
-  huart1.AdvancedInit.AutoBaudRateMode = UART_ADVFEATURE_AUTOBAUDRATE_ON0X55FRAME;
-  if (HAL_LIN_Init(&huart1, UART_LINBREAKDETECTLENGTH_10B) != HAL_OK)
+  huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  if (HAL_LIN_Init(&huart1, UART_LINBREAKDETECTLENGTH_11B) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+//    _Error_Handler(__FILE__, __LINE__);
   }
 
 }
@@ -221,6 +224,25 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
+	extern LinType_t lin_type;
+	uint8_t rbyte = Uart2RxFifo;
+	if (slcan_state == SLCAN_STATE_OPEN)
+	{
+		if (lin_type == LIN_MASTER)
+		{
+		  open_lin_master_dl_rx(rbyte);
+		} else {
+		  lin_slcan_rx(rbyte);
+		}
+	}
+	HAL_UART_Receive_IT(huart, &Uart2RxFifo, 1);
+}
+
+void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
+{
+
+}
 
 /* USER CODE END 4 */
 

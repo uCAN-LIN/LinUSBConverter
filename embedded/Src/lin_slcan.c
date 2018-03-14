@@ -28,7 +28,7 @@ t_master_frame_table_item* slcan_get_master_table_row(open_lin_pid_t id, int8_t*
 
 uint8_t addLinMasterRow(uint8_t* line) {
     uint32_t temp;
-    int8_t i,s;
+    int8_t i,out_index;
     t_master_frame_table_item* array_ptr = 0;
     uint16_t tFrame_Max_ms;
 
@@ -53,7 +53,7 @@ uint8_t addLinMasterRow(uint8_t* line) {
 
     // id
     if (!parseHex(&line[2], 2, &temp)) return 0;
-    array_ptr = slcan_get_master_table_row(temp, &s);
+    array_ptr = slcan_get_master_table_row(temp, &out_index);
 
     array_ptr->slot.pid= temp;
     // len
@@ -67,7 +67,7 @@ uint8_t addLinMasterRow(uint8_t* line) {
 	else
 		array_ptr->slot.frame_type = OPEN_LIN_FRAME_TYPE_TRANSMIT;
     // data
-    array_ptr->slot.data_ptr = &(lin_master_data[s * 8]); //data is later set in case of override
+    array_ptr->slot.data_ptr = &(lin_master_data[out_index * 8]); //data is later set in case of override
     // period
     array_ptr->offset_ms = 15;
     // timeout
@@ -83,6 +83,9 @@ uint8_t addLinMasterRow(uint8_t* line) {
         }
     }
 
+    if ((out_index == master_frame_table_size) && (master_frame_table_size < MAX_SLAVES_COUNT))
+    	 master_frame_table_size ++;
+
     return 1;
 }
 
@@ -96,6 +99,7 @@ void lin_slcan_reset(void){
 	slcan_lin_slave_state = OPEN_LIN_SLAVE_IDLE;
 	slcan_lin_slave_state_data_count = 0;
 	slcan_lin_timeout_counter = 0;
+//	open_lin_hw_reset();
 }
 
 open_lin_frame_slot_t lin_slcan_slot;
@@ -110,19 +114,23 @@ void lin_slcan_rx_handler(t_open_lin_data_layer_frame *f)
 
 void lin_slcan_rx_timeout_handler()
 {
-	open_lin_data_layer_frame.lenght = slcan_lin_slave_state_data_count - 1;
-	/* checksum calculation */
-	if (slcan_lin_data_array[slcan_lin_slave_state_data_count] == open_lin_data_layer_checksum(open_lin_data_layer_frame.pid,
-			open_lin_data_layer_frame.lenght, open_lin_data_layer_frame.data_ptr)) /* TODO remove from interrupt possible function */
+	if (slcan_state == SLCAN_STATE_OPEN)
 	{
-		/* valid checksum */
-		lin_slcan_rx_handler(&open_lin_data_layer_frame);
+		open_lin_data_layer_frame.lenght = slcan_lin_slave_state_data_count - 1;
+		/* checksum calculation */
+		if (slcan_lin_data_array[open_lin_data_layer_frame.lenght] == open_lin_data_layer_checksum(open_lin_data_layer_frame.pid,
+				open_lin_data_layer_frame.lenght, open_lin_data_layer_frame.data_ptr)) /* TODO remove from interrupt possible function */
+		{
+			/* valid checksum */
+			lin_slcan_rx_handler(&open_lin_data_layer_frame);
+		}
 	}
 	lin_slcan_reset();
 }
 
 void lin_slcan_skip_header_reception(uint8_t pid)
 {
+	open_lin_hw_reset();
 	lin_slcan_reset();
 	slcan_lin_slave_state = OPEN_LIN_SLAVE_DATA_RX;
 	open_lin_data_layer_frame.pid = pid;
@@ -131,11 +139,11 @@ void lin_slcan_skip_header_reception(uint8_t pid)
 
 void lin_slcan_rx(l_u8 rx_byte)
 {
-
+	volatile l_u8 tmp = rx_byte;
 	if (open_lin_hw_check_for_break() == l_true)
 	{
 		lin_slcan_reset();
-		slcan_lin_slave_state = OPEN_LIN_SLAVE_SYNC_RX;
+		slcan_lin_slave_state = OPEN_LIN_SLAVE_PID_RX;
 		#ifdef OPEN_LIN_AUTO_BAUND
 			open_lin_hw_set_auto_baud();
 		#endif
@@ -145,6 +153,7 @@ void lin_slcan_rx(l_u8 rx_byte)
 			case (OPEN_LIN_SLAVE_SYNC_RX):
 			{
 				/* synch byte reception do nothing */
+
 				if (rx_byte != OPEN_LIN_SYNCH_BYTE)
 				{
 					lin_slcan_reset();
@@ -157,6 +166,7 @@ void lin_slcan_rx(l_u8 rx_byte)
 
 			case (OPEN_LIN_SLAVE_PID_RX):
 			{
+				if (rx_byte == 0) break;
 				if (open_lin_data_layer_parity(rx_byte) == rx_byte)
 				{
 					open_lin_data_layer_frame.pid = (open_lin_pid_t)(rx_byte & OPEN_LIN_ID_MASK);
@@ -197,3 +207,5 @@ void lin_slcan_rx(l_u8 rx_byte)
 		}
 	}
 }
+
+

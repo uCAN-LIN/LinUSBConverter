@@ -72,6 +72,8 @@ void HardFault_Handler(void)
   /* USER CODE END HardFault_IRQn 0 */
   while (1)
   {
+    /* USER CODE BEGIN W1_HardFault_IRQn 0 */
+    /* USER CODE END W1_HardFault_IRQn 0 */
   }
   /* USER CODE BEGIN HardFault_IRQn 1 */
 
@@ -109,16 +111,15 @@ void PendSV_Handler(void)
 */
 void SysTick_Handler(void)
 {
-	extern uint32_t slcan_lin_timeout_counter;
   /* USER CODE BEGIN SysTick_IRQn 0 */
-
+  extern uint32_t slcan_lin_timeout_counter ;
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
   HAL_SYSTICK_IRQHandler();
   /* USER CODE BEGIN SysTick_IRQn 1 */
   slCanHandler(1);
 
-  if ((slcan_lin_timeout_counter != 0) && (slcan_lin_timeout_counter - HAL_GetTick() > 3))
+  if ((slcan_lin_timeout_counter != 0) && (HAL_GetTick() - slcan_lin_timeout_counter > 1))
   {
 	  lin_slcan_rx_timeout_handler();
   }
@@ -135,28 +136,13 @@ void SysTick_Handler(void)
 /**
 * @brief This function handles USART1 global interrupt / USART1 wake-up interrupt through EXTI line 25.
 */
+extern uint8_t Uart2RxFifo;
 void USART1_IRQHandler(void)
 {
-  uint8_t isRx=0;
   /* USER CODE BEGIN USART1_IRQn 0 */
-	 if (USART1->ISR & UART_IT_RXNE) {
-	        isRx=1;
-	    }
   /* USER CODE END USART1_IRQn 0 */
   HAL_UART_IRQHandler(&huart1);
   /* USER CODE BEGIN USART1_IRQn 1 */
-  if (isRx == 1)
-  {
-	  extern LinType_t lin_type ;
-	  uint8_t rbyte = huart1.Instance->RDR;
-	  if (lin_type == LIN_MASTER)
-	  {
-		  open_lin_master_dl_rx(rbyte);
-	  } else {
-		  lin_slcan_rx(rbyte);
-	  }
-
-  }
   /* USER CODE END USART1_IRQn 1 */
 }
 

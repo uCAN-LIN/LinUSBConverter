@@ -21,7 +21,7 @@
 
 extern int32_t serialNumber;
 
-uint8_t slcan_state = SLCAN_STATE_OPEN;
+uint8_t slcan_state = SLCAN_STATE_CONFIG;
 LinType_t lin_type = LIN_SLAVE;
 static uint8_t terminator = SLCAN_CR;
 
