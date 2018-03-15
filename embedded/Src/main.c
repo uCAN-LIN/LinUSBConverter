@@ -88,7 +88,7 @@ uint8_t Uart2RxFifo;
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+  bootloaderSwitcher();
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
@@ -256,7 +256,7 @@ void _Error_Handler(char *file, int line)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
-  while(1) 
+  while(1)
   {
   }
   /* USER CODE END Error_Handler_Debug */

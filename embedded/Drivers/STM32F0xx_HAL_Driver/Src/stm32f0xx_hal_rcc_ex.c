@@ -126,75 +126,75 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
   assert_param(IS_RCC_PERIPHCLOCK(PeriphClkInit->PeriphClockSelection));
   
   /*---------------------------- RTC configuration -------------------------------*/
-  if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_RTC) == (RCC_PERIPHCLK_RTC))
-  {
-    /* check for RTC Parameters used to output RTCCLK */
-    assert_param(IS_RCC_RTCCLKSOURCE(PeriphClkInit->RTCClockSelection));
-    
-    FlagStatus       pwrclkchanged = RESET;
-
-    /* As soon as function is called to change RTC clock source, activation of the 
-       power domain is done. */
-    /* Requires to enable write access to Backup Domain of necessary */
-    if(__HAL_RCC_PWR_IS_CLK_DISABLED())
-    {
-    __HAL_RCC_PWR_CLK_ENABLE();
-      pwrclkchanged = SET;
-    }
-    
-    if(HAL_IS_BIT_CLR(PWR->CR, PWR_CR_DBP))
-    {
-      /* Enable write access to Backup domain */
-      SET_BIT(PWR->CR, PWR_CR_DBP);
-      
-      /* Wait for Backup domain Write protection disable */
-      tickstart = HAL_GetTick();
-      
-      while(HAL_IS_BIT_CLR(PWR->CR, PWR_CR_DBP))
-      {
-        if((HAL_GetTick() - tickstart) > RCC_DBP_TIMEOUT_VALUE)
-        {
-          return HAL_TIMEOUT;
-        }
-      }
-    }
-    
-    /* Reset the Backup domain only if the RTC Clock source selection is modified from reset value */ 
-    temp_reg = (RCC->BDCR & RCC_BDCR_RTCSEL);
-    if((temp_reg != 0x00000000U) && (temp_reg != (PeriphClkInit->RTCClockSelection & RCC_BDCR_RTCSEL)))
-    {
-      /* Store the content of BDCR register before the reset of Backup Domain */
-      temp_reg = (RCC->BDCR & ~(RCC_BDCR_RTCSEL));
-      /* RTC Clock selection can be changed only if the Backup Domain is reset */
-      __HAL_RCC_BACKUPRESET_FORCE();
-      __HAL_RCC_BACKUPRESET_RELEASE();
-      /* Restore the Content of BDCR register */
-      RCC->BDCR = temp_reg;
-      
-      /* Wait for LSERDY if LSE was enabled */
-      if (HAL_IS_BIT_SET(temp_reg, RCC_BDCR_LSEON))
-      {
-        /* Get Start Tick */
-        tickstart = HAL_GetTick();
-        
-        /* Wait till LSE is ready */  
-        while(__HAL_RCC_GET_FLAG(RCC_FLAG_LSERDY) == RESET)
-        {
-          if((HAL_GetTick() - tickstart) > RCC_LSE_TIMEOUT_VALUE)
-          {
-            return HAL_TIMEOUT;
-          }
-        }
-      }
-    }
-    __HAL_RCC_RTC_CONFIG(PeriphClkInit->RTCClockSelection);
-
-    /* Require to disable power clock if necessary */
-    if(pwrclkchanged == SET)
-    {
-      __HAL_RCC_PWR_CLK_DISABLE();
-    }
-  }
+//  if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_RTC) == (RCC_PERIPHCLK_RTC))
+//  {
+//    /* check for RTC Parameters used to output RTCCLK */
+//    assert_param(IS_RCC_RTCCLKSOURCE(PeriphClkInit->RTCClockSelection));
+//
+//    FlagStatus       pwrclkchanged = RESET;
+//
+//    /* As soon as function is called to change RTC clock source, activation of the
+//       power domain is done. */
+//    /* Requires to enable write access to Backup Domain of necessary */
+//    if(__HAL_RCC_PWR_IS_CLK_DISABLED())
+//    {
+//    __HAL_RCC_PWR_CLK_ENABLE();
+//      pwrclkchanged = SET;
+//    }
+//
+//    if(HAL_IS_BIT_CLR(PWR->CR, PWR_CR_DBP))
+//    {
+//      /* Enable write access to Backup domain */
+//      SET_BIT(PWR->CR, PWR_CR_DBP);
+//
+//      /* Wait for Backup domain Write protection disable */
+//      tickstart = HAL_GetTick();
+//
+//      while(HAL_IS_BIT_CLR(PWR->CR, PWR_CR_DBP))
+//      {
+//        if((HAL_GetTick() - tickstart) > RCC_DBP_TIMEOUT_VALUE)
+//        {
+//          return HAL_TIMEOUT;
+//        }
+//      }
+//    }
+//
+//    /* Reset the Backup domain only if the RTC Clock source selection is modified from reset value */
+//    temp_reg = (RCC->BDCR & RCC_BDCR_RTCSEL);
+//    if((temp_reg != 0x00000000U) && (temp_reg != (PeriphClkInit->RTCClockSelection & RCC_BDCR_RTCSEL)))
+//    {
+//      /* Store the content of BDCR register before the reset of Backup Domain */
+//      temp_reg = (RCC->BDCR & ~(RCC_BDCR_RTCSEL));
+//      /* RTC Clock selection can be changed only if the Backup Domain is reset */
+//      __HAL_RCC_BACKUPRESET_FORCE();
+//      __HAL_RCC_BACKUPRESET_RELEASE();
+//      /* Restore the Content of BDCR register */
+//      RCC->BDCR = temp_reg;
+//
+//      /* Wait for LSERDY if LSE was enabled */
+//      if (HAL_IS_BIT_SET(temp_reg, RCC_BDCR_LSEON))
+//      {
+//        /* Get Start Tick */
+//        tickstart = HAL_GetTick();
+//
+//        /* Wait till LSE is ready */
+//        while(__HAL_RCC_GET_FLAG(RCC_FLAG_LSERDY) == RESET)
+//        {
+//          if((HAL_GetTick() - tickstart) > RCC_LSE_TIMEOUT_VALUE)
+//          {
+//            return HAL_TIMEOUT;
+//          }
+//        }
+//      }
+//    }
+//    __HAL_RCC_RTC_CONFIG(PeriphClkInit->RTCClockSelection);
+//
+//    /* Require to disable power clock if necessary */
+//    if(pwrclkchanged == SET)
+//    {
+//      __HAL_RCC_PWR_CLK_DISABLE();
+//    }
+//  }
 
   /*------------------------------- USART1 Configuration ------------------------*/ 
   if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_USART1) == RCC_PERIPHCLK_USART1)

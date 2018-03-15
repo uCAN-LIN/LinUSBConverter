@@ -280,291 +280,291 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
     /* Check the parameters */
     assert_param(IS_RCC_HSE(RCC_OscInitStruct->HSEState));
 
-    /* When the HSE is used as system clock or clock source for PLL in these cases it is not allowed to be disabled */
-    if((__HAL_RCC_GET_SYSCLK_SOURCE() == RCC_SYSCLKSOURCE_STATUS_HSE) 
-       || ((__HAL_RCC_GET_SYSCLK_SOURCE() == RCC_SYSCLKSOURCE_STATUS_PLLCLK) && (__HAL_RCC_GET_PLL_OSCSOURCE() == RCC_PLLSOURCE_HSE)))
-    {
-      if((__HAL_RCC_GET_FLAG(RCC_FLAG_HSERDY) != RESET) && (RCC_OscInitStruct->HSEState == RCC_HSE_OFF))
-      {
-        return HAL_ERROR;
-      }
-    }
-    else
-    {
-      /* Set the new HSE configuration ---------------------------------------*/
-      __HAL_RCC_HSE_CONFIG(RCC_OscInitStruct->HSEState);
-      
-
-       /* Check the HSE State */
-      if(RCC_OscInitStruct->HSEState != RCC_HSE_OFF)
-      {
-        /* Get Start Tick */
-        tickstart = HAL_GetTick();
-        
-        /* Wait till HSE is ready */
-        while(__HAL_RCC_GET_FLAG(RCC_FLAG_HSERDY) == RESET)
-        {
-          if((HAL_GetTick() - tickstart ) > HSE_TIMEOUT_VALUE)
-          {
-            return HAL_TIMEOUT;
-          }
-        }
-      }
-      else
-      {
-        /* Get Start Tick */
-        tickstart = HAL_GetTick();
-        
-        /* Wait till HSE is disabled */
-        while(__HAL_RCC_GET_FLAG(RCC_FLAG_HSERDY) != RESET)
-        {
-           if((HAL_GetTick() - tickstart ) > HSE_TIMEOUT_VALUE)
-          {
-            return HAL_TIMEOUT;
-          }
-        }
-      }
-    }
+//    /* When the HSE is used as system clock or clock source for PLL in these cases it is not allowed to be disabled */
+//    if((__HAL_RCC_GET_SYSCLK_SOURCE() == RCC_SYSCLKSOURCE_STATUS_HSE)
+//       || ((__HAL_RCC_GET_SYSCLK_SOURCE() == RCC_SYSCLKSOURCE_STATUS_PLLCLK) && (__HAL_RCC_GET_PLL_OSCSOURCE() == RCC_PLLSOURCE_HSE)))
+//    {
+//      if((__HAL_RCC_GET_FLAG(RCC_FLAG_HSERDY) != RESET) && (RCC_OscInitStruct->HSEState == RCC_HSE_OFF))
+//      {
+//        return HAL_ERROR;
+//      }
+//    }
+//    else
+//    {
+//      /* Set the new HSE configuration ---------------------------------------*/
+//      __HAL_RCC_HSE_CONFIG(RCC_OscInitStruct->HSEState);
+//
+//
+//       /* Check the HSE State */
+//      if(RCC_OscInitStruct->HSEState != RCC_HSE_OFF)
+//      {
+//        /* Get Start Tick */
+//        tickstart = HAL_GetTick();
+//
+//        /* Wait till HSE is ready */
+//        while(__HAL_RCC_GET_FLAG(RCC_FLAG_HSERDY) == RESET)
+//        {
+//          if((HAL_GetTick() - tickstart ) > HSE_TIMEOUT_VALUE)
+//          {
+//            return HAL_TIMEOUT;
+//          }
+//        }
+//      }
+//      else
+//      {
+//        /* Get Start Tick */
+//        tickstart = HAL_GetTick();
+//
+//        /* Wait till HSE is disabled */
+//        while(__HAL_RCC_GET_FLAG(RCC_FLAG_HSERDY) != RESET)
+//        {
+//           if((HAL_GetTick() - tickstart ) > HSE_TIMEOUT_VALUE)
+//          {
+//            return HAL_TIMEOUT;
+//          }
+//        }
+//      }
+//    }
   }
   /*----------------------------- HSI Configuration --------------------------*/ 
-  if(((RCC_OscInitStruct->OscillatorType) & RCC_OSCILLATORTYPE_HSI) == RCC_OSCILLATORTYPE_HSI)
-  {
-    /* Check the parameters */
-    assert_param(IS_RCC_HSI(RCC_OscInitStruct->HSIState));
-    assert_param(IS_RCC_CALIBRATION_VALUE(RCC_OscInitStruct->HSICalibrationValue));
-    
-    /* Check if HSI is used as system clock or as PLL source when PLL is selected as system clock */ 
-    if((__HAL_RCC_GET_SYSCLK_SOURCE() == RCC_SYSCLKSOURCE_STATUS_HSI) 
-       || ((__HAL_RCC_GET_SYSCLK_SOURCE() == RCC_SYSCLKSOURCE_STATUS_PLLCLK) && (__HAL_RCC_GET_PLL_OSCSOURCE() == RCC_PLLSOURCE_HSI)))
-    {
-      /* When HSI is used as system clock it will not disabled */
-      if((__HAL_RCC_GET_FLAG(RCC_FLAG_HSIRDY) != RESET) && (RCC_OscInitStruct->HSIState != RCC_HSI_ON))
-      {
-        return HAL_ERROR;
-      }
-      /* Otherwise, just the calibration is allowed */
-      else
-      {
-        /* Adjusts the Internal High Speed oscillator (HSI) calibration value.*/
-        __HAL_RCC_HSI_CALIBRATIONVALUE_ADJUST(RCC_OscInitStruct->HSICalibrationValue);
-      }
-    }
-    else
-    {
-      /* Check the HSI State */
-      if(RCC_OscInitStruct->HSIState != RCC_HSI_OFF)
-      {
-       /* Enable the Internal High Speed oscillator (HSI). */
-        __HAL_RCC_HSI_ENABLE();
-        
-        /* Get Start Tick */
-        tickstart = HAL_GetTick();
-        
-        /* Wait till HSI is ready */
-        while(__HAL_RCC_GET_FLAG(RCC_FLAG_HSIRDY) == RESET)
-        {
-          if((HAL_GetTick() - tickstart ) > HSI_TIMEOUT_VALUE)
-          {
-            return HAL_TIMEOUT;
-          }
-        }
-                
-        /* Adjusts the Internal High Speed oscillator (HSI) calibration value.*/
-        __HAL_RCC_HSI_CALIBRATIONVALUE_ADJUST(RCC_OscInitStruct->HSICalibrationValue);
-      }
-      else
-      {
-        /* Disable the Internal High Speed oscillator (HSI). */
-        __HAL_RCC_HSI_DISABLE();
-        
-        /* Get Start Tick */
-        tickstart = HAL_GetTick();
-        
-        /* Wait till HSI is disabled */
-        while(__HAL_RCC_GET_FLAG(RCC_FLAG_HSIRDY) != RESET)
-        {
-          if((HAL_GetTick() - tickstart ) > HSI_TIMEOUT_VALUE)
-          {
-            return HAL_TIMEOUT;
-          }
-        }
-      }
-    }
-  }
+//  if(((RCC_OscInitStruct->OscillatorType) & RCC_OSCILLATORTYPE_HSI) == RCC_OSCILLATORTYPE_HSI)
+//  {
+//    /* Check the parameters */
+//    assert_param(IS_RCC_HSI(RCC_OscInitStruct->HSIState));
+//    assert_param(IS_RCC_CALIBRATION_VALUE(RCC_OscInitStruct->HSICalibrationValue));
+//
+//    /* Check if HSI is used as system clock or as PLL source when PLL is selected as system clock */
+//    if((__HAL_RCC_GET_SYSCLK_SOURCE() == RCC_SYSCLKSOURCE_STATUS_HSI)
+//       || ((__HAL_RCC_GET_SYSCLK_SOURCE() == RCC_SYSCLKSOURCE_STATUS_PLLCLK) && (__HAL_RCC_GET_PLL_OSCSOURCE() == RCC_PLLSOURCE_HSI)))
+//    {
+//      /* When HSI is used as system clock it will not disabled */
+//      if((__HAL_RCC_GET_FLAG(RCC_FLAG_HSIRDY) != RESET) && (RCC_OscInitStruct->HSIState != RCC_HSI_ON))
+//      {
+//        return HAL_ERROR;
+//      }
+//      /* Otherwise, just the calibration is allowed */
+//      else
+//      {
+//        /* Adjusts the Internal High Speed oscillator (HSI) calibration value.*/
+//        __HAL_RCC_HSI_CALIBRATIONVALUE_ADJUST(RCC_OscInitStruct->HSICalibrationValue);
+//      }
+//    }
+//    else
+//    {
+//      /* Check the HSI State */
+//      if(RCC_OscInitStruct->HSIState != RCC_HSI_OFF)
+//      {
+//       /* Enable the Internal High Speed oscillator (HSI). */
+//        __HAL_RCC_HSI_ENABLE();
+//
+//        /* Get Start Tick */
+//        tickstart = HAL_GetTick();
+//
+//        /* Wait till HSI is ready */
+//        while(__HAL_RCC_GET_FLAG(RCC_FLAG_HSIRDY) == RESET)
+//        {
+//          if((HAL_GetTick() - tickstart ) > HSI_TIMEOUT_VALUE)
+//          {
+//            return HAL_TIMEOUT;
+//          }
+//        }
+//
+//        /* Adjusts the Internal High Speed oscillator (HSI) calibration value.*/
+//        __HAL_RCC_HSI_CALIBRATIONVALUE_ADJUST(RCC_OscInitStruct->HSICalibrationValue);
+//      }
+//      else
+//      {
+//        /* Disable the Internal High Speed oscillator (HSI). */
+//        __HAL_RCC_HSI_DISABLE();
+//
+//        /* Get Start Tick */
+//        tickstart = HAL_GetTick();
+//
+//        /* Wait till HSI is disabled */
+//        while(__HAL_RCC_GET_FLAG(RCC_FLAG_HSIRDY) != RESET)
+//        {
+//          if((HAL_GetTick() - tickstart ) > HSI_TIMEOUT_VALUE)
+//          {
+//            return HAL_TIMEOUT;
+//          }
+//        }
+//      }
+//    }
+//  }
   /*------------------------------ LSI Configuration -------------------------*/ 
-  if(((RCC_OscInitStruct->OscillatorType) & RCC_OSCILLATORTYPE_LSI) == RCC_OSCILLATORTYPE_LSI)
-  {
-    /* Check the parameters */
-    assert_param(IS_RCC_LSI(RCC_OscInitStruct->LSIState));
-    
-    /* Check the LSI State */
-    if(RCC_OscInitStruct->LSIState != RCC_LSI_OFF)
-    {
-      /* Enable the Internal Low Speed oscillator (LSI). */
-      __HAL_RCC_LSI_ENABLE();
-      
-      /* Get Start Tick */
-      tickstart = HAL_GetTick();
-      
-      /* Wait till LSI is ready */  
-      while(__HAL_RCC_GET_FLAG(RCC_FLAG_LSIRDY) == RESET)
-      {
-        if((HAL_GetTick() - tickstart ) > LSI_TIMEOUT_VALUE)
-        {
-          return HAL_TIMEOUT;
-        }
-      }
-    }
-    else
-    {
-      /* Disable the Internal Low Speed oscillator (LSI). */
-      __HAL_RCC_LSI_DISABLE();
-      
-      /* Get Start Tick */
-      tickstart = HAL_GetTick();
-      
-      /* Wait till LSI is disabled */  
-      while(__HAL_RCC_GET_FLAG(RCC_FLAG_LSIRDY) != RESET)
-      {
-        if((HAL_GetTick() - tickstart ) > LSI_TIMEOUT_VALUE)
-        {
-          return HAL_TIMEOUT;
-        }
-      }
-    }
-  }
+//  if(((RCC_OscInitStruct->OscillatorType) & RCC_OSCILLATORTYPE_LSI) == RCC_OSCILLATORTYPE_LSI)
+//  {
+//    /* Check the parameters */
+//    assert_param(IS_RCC_LSI(RCC_OscInitStruct->LSIState));
+//
+//    /* Check the LSI State */
+//    if(RCC_OscInitStruct->LSIState != RCC_LSI_OFF)
+//    {
+//      /* Enable the Internal Low Speed oscillator (LSI). */
+//      __HAL_RCC_LSI_ENABLE();
+//
+//      /* Get Start Tick */
+//      tickstart = HAL_GetTick();
+//
+//      /* Wait till LSI is ready */
+//      while(__HAL_RCC_GET_FLAG(RCC_FLAG_LSIRDY) == RESET)
+//      {
+//        if((HAL_GetTick() - tickstart ) > LSI_TIMEOUT_VALUE)
+//        {
+//          return HAL_TIMEOUT;
+//        }
+//      }
+//    }
+//    else
+//    {
+//      /* Disable the Internal Low Speed oscillator (LSI). */
+//      __HAL_RCC_LSI_DISABLE();
+//
+//      /* Get Start Tick */
+//      tickstart = HAL_GetTick();
+//
+//      /* Wait till LSI is disabled */
+//      while(__HAL_RCC_GET_FLAG(RCC_FLAG_LSIRDY) != RESET)
+//      {
+//        if((HAL_GetTick() - tickstart ) > LSI_TIMEOUT_VALUE)
+//        {
+//          return HAL_TIMEOUT;
+//        }
+//      }
+//    }
+//  }
   /*------------------------------ LSE Configuration -------------------------*/ 
-  if(((RCC_OscInitStruct->OscillatorType) & RCC_OSCILLATORTYPE_LSE) == RCC_OSCILLATORTYPE_LSE)
-  {
-    FlagStatus       pwrclkchanged = RESET;
-    
-    /* Check the parameters */
-    assert_param(IS_RCC_LSE(RCC_OscInitStruct->LSEState));
-
-    /* Update LSE configuration in Backup Domain control register    */
-    /* Requires to enable write access to Backup Domain of necessary */
-    if(__HAL_RCC_PWR_IS_CLK_DISABLED())
-    {
-      __HAL_RCC_PWR_CLK_ENABLE();
-      pwrclkchanged = SET;
-    }
-    
-    if(HAL_IS_BIT_CLR(PWR->CR, PWR_CR_DBP))
-    {
-      /* Enable write access to Backup domain */
-      SET_BIT(PWR->CR, PWR_CR_DBP);
-      
-      /* Wait for Backup domain Write protection disable */
-      tickstart = HAL_GetTick();
-
-      while(HAL_IS_BIT_CLR(PWR->CR, PWR_CR_DBP))
-      {
-        if((HAL_GetTick() - tickstart) > RCC_DBP_TIMEOUT_VALUE)
-        {
-          return HAL_TIMEOUT;
-        }
-      }
-    }
-
-    /* Set the new LSE configuration -----------------------------------------*/
-    __HAL_RCC_LSE_CONFIG(RCC_OscInitStruct->LSEState);
-    /* Check the LSE State */
-    if(RCC_OscInitStruct->LSEState != RCC_LSE_OFF)
-    {
-      /* Get Start Tick */
-      tickstart = HAL_GetTick();
-      
-      /* Wait till LSE is ready */  
-      while(__HAL_RCC_GET_FLAG(RCC_FLAG_LSERDY) == RESET)
-      {
-        if((HAL_GetTick() - tickstart ) > RCC_LSE_TIMEOUT_VALUE)
-        {
-          return HAL_TIMEOUT;
-        }
-      }
-    }
-    else
-    {
-      /* Get Start Tick */
-      tickstart = HAL_GetTick();
-      
-      /* Wait till LSE is disabled */  
-      while(__HAL_RCC_GET_FLAG(RCC_FLAG_LSERDY) != RESET)
-      {
-        if((HAL_GetTick() - tickstart ) > RCC_LSE_TIMEOUT_VALUE)
-        {
-          return HAL_TIMEOUT;
-        }
-      }
-    }
-
-    /* Require to disable power clock if necessary */
-    if(pwrclkchanged == SET)
-    {
-      __HAL_RCC_PWR_CLK_DISABLE();
-    }
-  }
+//  if(((RCC_OscInitStruct->OscillatorType) & RCC_OSCILLATORTYPE_LSE) == RCC_OSCILLATORTYPE_LSE)
+//  {
+//    FlagStatus       pwrclkchanged = RESET;
+//
+//    /* Check the parameters */
+//    assert_param(IS_RCC_LSE(RCC_OscInitStruct->LSEState));
+//
+//    /* Update LSE configuration in Backup Domain control register    */
+//    /* Requires to enable write access to Backup Domain of necessary */
+//    if(__HAL_RCC_PWR_IS_CLK_DISABLED())
+//    {
+//      __HAL_RCC_PWR_CLK_ENABLE();
+//      pwrclkchanged = SET;
+//    }
+//
+//    if(HAL_IS_BIT_CLR(PWR->CR, PWR_CR_DBP))
+//    {
+//      /* Enable write access to Backup domain */
+//      SET_BIT(PWR->CR, PWR_CR_DBP);
+//
+//      /* Wait for Backup domain Write protection disable */
+//      tickstart = HAL_GetTick();
+//
+//      while(HAL_IS_BIT_CLR(PWR->CR, PWR_CR_DBP))
+//      {
+//        if((HAL_GetTick() - tickstart) > RCC_DBP_TIMEOUT_VALUE)
+//        {
+//          return HAL_TIMEOUT;
+//        }
+//      }
+//    }
+//
+//    /* Set the new LSE configuration -----------------------------------------*/
+//    __HAL_RCC_LSE_CONFIG(RCC_OscInitStruct->LSEState);
+//    /* Check the LSE State */
+//    if(RCC_OscInitStruct->LSEState != RCC_LSE_OFF)
+//    {
+//      /* Get Start Tick */
+//      tickstart = HAL_GetTick();
+//
+//      /* Wait till LSE is ready */
+//      while(__HAL_RCC_GET_FLAG(RCC_FLAG_LSERDY) == RESET)
+//      {
+//        if((HAL_GetTick() - tickstart ) > RCC_LSE_TIMEOUT_VALUE)
+//        {
+//          return HAL_TIMEOUT;
+//        }
+//      }
+//    }
+//    else
+//    {
+//      /* Get Start Tick */
+//      tickstart = HAL_GetTick();
+//
+//      /* Wait till LSE is disabled */
+//      while(__HAL_RCC_GET_FLAG(RCC_FLAG_LSERDY) != RESET)
+//      {
+//        if((HAL_GetTick() - tickstart ) > RCC_LSE_TIMEOUT_VALUE)
+//        {
+//          return HAL_TIMEOUT;
+//        }
+//      }
+//    }
+//
+//    /* Require to disable power clock if necessary */
+//    if(pwrclkchanged == SET)
+//    {
+//      __HAL_RCC_PWR_CLK_DISABLE();
+//    }
+//  }
 
   /*----------------------------- HSI14 Configuration --------------------------*/
-  if(((RCC_OscInitStruct->OscillatorType) & RCC_OSCILLATORTYPE_HSI14) == RCC_OSCILLATORTYPE_HSI14)
-  {
-    /* Check the parameters */
-    assert_param(IS_RCC_HSI14(RCC_OscInitStruct->HSI14State));
-    assert_param(IS_RCC_CALIBRATION_VALUE(RCC_OscInitStruct->HSI14CalibrationValue));
-
-    /* Check the HSI14 State */
-    if(RCC_OscInitStruct->HSI14State == RCC_HSI14_ON)
-    {
-      /* Disable ADC control of the Internal High Speed oscillator HSI14 */
-      __HAL_RCC_HSI14ADC_DISABLE();
-
-      /* Enable the Internal High Speed oscillator (HSI). */
-      __HAL_RCC_HSI14_ENABLE();
-
-      /* Get Start Tick */
-      tickstart = HAL_GetTick();
-      
-      /* Wait till HSI is ready */  
-      while(__HAL_RCC_GET_FLAG(RCC_FLAG_HSI14RDY) == RESET)
-      {
-        if((HAL_GetTick() - tickstart) > HSI14_TIMEOUT_VALUE)
-        {
-          return HAL_TIMEOUT;
-        }      
-      } 
-
-      /* Adjusts the Internal High Speed oscillator 14Mhz (HSI14) calibration value. */
-      __HAL_RCC_HSI14_CALIBRATIONVALUE_ADJUST(RCC_OscInitStruct->HSI14CalibrationValue);
-    }
-    else if(RCC_OscInitStruct->HSI14State == RCC_HSI14_ADC_CONTROL)
-    {
-      /* Enable ADC control of the Internal High Speed oscillator HSI14 */
-      __HAL_RCC_HSI14ADC_ENABLE();
-
-      /* Adjusts the Internal High Speed oscillator 14Mhz (HSI14) calibration value. */
-      __HAL_RCC_HSI14_CALIBRATIONVALUE_ADJUST(RCC_OscInitStruct->HSI14CalibrationValue);
-    }
-    else
-    {
-      /* Disable ADC control of the Internal High Speed oscillator HSI14 */
-      __HAL_RCC_HSI14ADC_DISABLE();
-
-      /* Disable the Internal High Speed oscillator (HSI). */
-      __HAL_RCC_HSI14_DISABLE();
-
-      /* Get Start Tick */
-      tickstart = HAL_GetTick();
-      
-      /* Wait till HSI is ready */  
-      while(__HAL_RCC_GET_FLAG(RCC_FLAG_HSI14RDY) != RESET)
-      {
-        if((HAL_GetTick() - tickstart) > HSI14_TIMEOUT_VALUE)
-        {
-          return HAL_TIMEOUT;
-        }
-      }
-    }
-  }
+//  if(((RCC_OscInitStruct->OscillatorType) & RCC_OSCILLATORTYPE_HSI14) == RCC_OSCILLATORTYPE_HSI14)
+//  {
+//    /* Check the parameters */
+//    assert_param(IS_RCC_HSI14(RCC_OscInitStruct->HSI14State));
+//    assert_param(IS_RCC_CALIBRATION_VALUE(RCC_OscInitStruct->HSI14CalibrationValue));
+//
+//    /* Check the HSI14 State */
+//    if(RCC_OscInitStruct->HSI14State == RCC_HSI14_ON)
+//    {
+//      /* Disable ADC control of the Internal High Speed oscillator HSI14 */
+//      __HAL_RCC_HSI14ADC_DISABLE();
+//
+//      /* Enable the Internal High Speed oscillator (HSI). */
+//      __HAL_RCC_HSI14_ENABLE();
+//
+//      /* Get Start Tick */
+//      tickstart = HAL_GetTick();
+//
+//      /* Wait till HSI is ready */
+//      while(__HAL_RCC_GET_FLAG(RCC_FLAG_HSI14RDY) == RESET)
+//      {
+//        if((HAL_GetTick() - tickstart) > HSI14_TIMEOUT_VALUE)
+//        {
+//          return HAL_TIMEOUT;
+//        }
+//      }
+//
+//      /* Adjusts the Internal High Speed oscillator 14Mhz (HSI14) calibration value. */
+//      __HAL_RCC_HSI14_CALIBRATIONVALUE_ADJUST(RCC_OscInitStruct->HSI14CalibrationValue);
+//    }
+//    else if(RCC_OscInitStruct->HSI14State == RCC_HSI14_ADC_CONTROL)
+//    {
+//      /* Enable ADC control of the Internal High Speed oscillator HSI14 */
+//      __HAL_RCC_HSI14ADC_ENABLE();
+//
+//      /* Adjusts the Internal High Speed oscillator 14Mhz (HSI14) calibration value. */
+//      __HAL_RCC_HSI14_CALIBRATIONVALUE_ADJUST(RCC_OscInitStruct->HSI14CalibrationValue);
+//    }
+//    else
+//    {
+//      /* Disable ADC control of the Internal High Speed oscillator HSI14 */
+//      __HAL_RCC_HSI14ADC_DISABLE();
+//
+//      /* Disable the Internal High Speed oscillator (HSI). */
+//      __HAL_RCC_HSI14_DISABLE();
+//
+//      /* Get Start Tick */
+//      tickstart = HAL_GetTick();
+//
+//      /* Wait till HSI is ready */
+//      while(__HAL_RCC_GET_FLAG(RCC_FLAG_HSI14RDY) != RESET)
+//      {
+//        if((HAL_GetTick() - tickstart) > HSI14_TIMEOUT_VALUE)
+//        {
+//          return HAL_TIMEOUT;
+//        }
+//      }
+//    }
+//  }
 
 #if defined(RCC_HSI48_SUPPORT)
   /*----------------------------- HSI48 Configuration --------------------------*/

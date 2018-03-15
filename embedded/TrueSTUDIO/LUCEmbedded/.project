@@ -117,6 +117,11 @@
 			<locationURI>PARENT-1-PROJECT_LOC/startup_stm32f042x6.s</locationURI>
 		</link>
 		<link>
+			<name>Application/User/bootloader.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Src/bootloader.c</locationURI>
+		</link>
+		<link>
 			<name>Application/User/lin_slcan.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Src/lin_slcan.c</locationURI>

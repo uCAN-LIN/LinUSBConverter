@@ -276,7 +276,6 @@ void slCanCheckCommand()
         case 'T':
             break;
         case 't': // Transmit full frame
-
             if (lin_type == LIN_MASTER)
             {
                 addLinMasterRow(line);
@@ -295,6 +294,12 @@ void slCanCheckCommand()
             }
             break;
     }
+
+    if ((line[0] == 'b') && (line[1] == 'o') && (line[2] == 'o') && (line[3] == 't'))
+    {
+    	RebootToBootloader();
+    }
+
    line[0] = 0;
    slcanSetOutputChar(result);
    slcanOutputFlush();
