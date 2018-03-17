@@ -33,6 +33,8 @@ F 0 "R5" H 2330 1404 50  0000 R CNN
 F 1 "10k" V 2400 1500 50  0000 R CNN
 F 2 "Resistors_SMD:R_0603" H 2330 1541 50  0001 R CNN
 F 3 "" H 2400 1450 50  0000 C CNN
+F 4 "https://www.tme.eu/pl/details/wf06p-10k-5%25/rezystory-smd-0603/walsin/wf06p103jtl/" H 2400 1450 50  0001 C CNN "1st Disrtib Link"
+F 5 "WALSIN/WF06P103JTL" H 2400 1450 50  0001 C CNN "Manufacturer"
 	1    2400 1450
 	-1   0    0    1   
 $EndComp
@@ -68,6 +70,8 @@ F 0 "C8" H 5315 2996 50  0000 L CNN
 F 1 "10n" H 5315 2905 50  0000 L CNN
 F 2 "Capacitors_SMD:C_0402" H 5238 2800 50  0001 C CNN
 F 3 "" H 5200 2950 50  0000 C CNN
+F 4 "https://www.tme.eu/pl/details/cl05b103ka5nnnc/kondensatory-mlcc-smd-0402/samsung/" H 5200 2950 50  0001 C CNN "1st Disrtib Link"
+F 5 "SAMSUNG/CL05B103KA5NNNC" H 5200 2950 50  0001 C CNN "Manufacturer"
 	1    5200 2950
 	1    0    0    -1  
 $EndComp
@@ -79,6 +83,8 @@ F 0 "C9" H 5715 2996 50  0000 L CNN
 F 1 "100n" H 5715 2905 50  0000 L CNN
 F 2 "Capacitors_SMD:C_0402" H 5638 2800 50  0001 C CNN
 F 3 "" H 5600 2950 50  0000 C CNN
+F 4 "https://www.tme.eu/pl/details/c0402c104k8pac/kondensatory-mlcc-smd-0402/kemet/c0402c104k8pactu/" H 5600 2950 50  0001 C CNN "1st Disrtib Link"
+F 5 "KEMET/C0402C104K8PACTU" H 5600 2950 50  0001 C CNN "Manufacturer"
 	1    5600 2950
 	1    0    0    -1  
 $EndComp
@@ -177,9 +183,10 @@ F 0 "U4" H 3750 2050 60  0000 C CNN
 F 1 "STM32F042G4U6" H 4550 550 39  0000 C CNN
 F 2 "usb_ccb_custom:ST_UFQFPN-28_3x3mm_P0.5mm" H 5050 400 60  0001 C CNN
 F 3 "" H 3900 1600 60  0000 C CNN
-F 4 "STM32F042G4U6" H 3900 1600 60  0001 C CNN "MFG Part Num"
-F 5 "ST" H 3900 1600 60  0001 C CNN "MFG"
-F 6 "http://www.tme.eu/pl/details/stm32f042g4u6/mikrokontrolery-st/st-microelectronics/" H 3900 1600 60  0001 C CNN "1st Disrtib Link"
+F 4 "http://www.tme.eu/pl/details/stm32f042g4u6/mikrokontrolery-st/st-microelectronics/" H 3900 1600 60  0001 C CNN "1st Disrtib Link"
+F 5 "ST" H 3900 1600 50  0001 C CNN "Manufacturer"
+F 6 "STM32F042G4U6" H 3900 1600 60  0001 C CNN "MFG Part Num"
+F 7 "ST" H 3900 1600 60  0001 C CNN "MFG"
 	1    3900 1600
 	1    0    0    -1  
 $EndComp
@@ -225,9 +232,11 @@ L LIN_USB_CONVERTER-rescue:TJA1028-RESCUE-LIN_USB_CONVERTER U1
 U 1 1 5A6A1D66
 P 2250 3550
 F 0 "U1" H 2250 3950 60  0000 C CNN
-F 1 "TJA1028" H 2700 3300 60  0000 C CNN
+F 1 "TJA1028TK/3V3/20/J" H 2450 3300 60  0000 C CNN
 F 2 "usb_ccb_custom:HVSON8" H 2250 3550 60  0001 C CNN
 F 3 "" H 2250 3550 60  0001 C CNN
+F 4 "https://octopart.com/tja1028tk%2F3v3%2F20%2Fj-nxp+semiconductors-30964986?r=sp&s=ng-i0gkdTdmf8j_7SG9MMg" H 2250 3550 50  0001 C CNN "1st Disrtib Link"
+F 5 "NXP" H 2250 3550 50  0001 C CNN "Manufacturer"
 	1    2250 3550
 	1    0    0    -1  
 $EndComp
@@ -236,9 +245,11 @@ L LIN_USB_CONVERTER-rescue:Conn_01x03-RESCUE-LIN_USB_CONVERTER J2
 U 1 1 5A6A1EE0
 P 700 3550
 F 0 "J2" H 700 3350 50  0000 C CNN
-F 1 "Conn_01x03" H 700 3350 50  0001 C CNN
+F 1 "TerminalBlock" H 700 3350 50  0001 C CNN
 F 2 "Connectors_Terminal_Blocks:TerminalBlock_Altech_AK300-3_P5.00mm" H 700 3550 50  0001 C CNN
 F 3 "" H 700 3550 50  0001 C CNN
+F 4 "https://www.tme.eu/pl/details/tb-5.0-p-3p_gy/listwy-zaciskowe-do-druku/ninigi/" H 700 3550 50  0001 C CNN "1st Disrtib Link"
+F 5 "NINIGI/TB-5.0-P-3P/GY" H 700 3550 50  0001 C CNN "Manufacturer"
 	1    700  3550
 	-1   0    0    1   
 $EndComp
@@ -250,6 +261,8 @@ F 0 "R2" V 1450 3450 50  0000 C CNN
 F 1 "50" V 1550 3450 50  0000 C CNN
 F 2 "Resistors_SMD:R_0603" V 1480 3450 50  0001 C CNN
 F 3 "" H 1550 3450 50  0001 C CNN
+F 4 "https://www.tme.eu/pl/details/rc0603fr-0749r9l/rezystory-smd-0603/yageo/" H 1550 3450 50  0001 C CNN "1st Disrtib Link"
+F 5 "YAGEO/RC0603FR-0749R9L" H 1550 3450 50  0001 C CNN "Manufacturer"
 	1    1550 3450
 	0    1    1    0   
 $EndComp
@@ -269,9 +282,11 @@ L LIN_USB_CONVERTER-rescue:MAX12931-RESCUE-LIN_USB_CONVERTER U2
 U 1 1 5A6A2718
 P 3750 3500
 F 0 "U2" H 3550 3800 60  0000 C CNN
-F 1 "MAX12931" H 3900 3150 60  0000 C CNN
+F 1 "MAX12931BASA+" H 3750 3200 60  0000 C CNN
 F 2 "usb_ccb_custom:SOIC-8-N_MAXIM" H 3750 3500 60  0001 C CNN
 F 3 "" H 3750 3500 60  0001 C CNN
+F 4 "https://octopart.com/max12931basa%2B-maxim+integrated-81881677?r=sp&s=gGYYW1lERgCmIqeXABfzjw" H 3750 3500 50  0001 C CNN "1st Disrtib Link"
+F 5 "Maxim" H 3750 3500 50  0001 C CNN "Manufacturer"
 	1    3750 3500
 	1    0    0    -1  
 $EndComp
@@ -294,6 +309,8 @@ F 0 "C2" H 2010 4220 50  0000 L CNN
 F 1 "1u" H 2010 4070 50  0000 L CNN
 F 2 "Capacitors_SMD:C_0603" H 2000 4150 50  0001 C CNN
 F 3 "" H 2000 4150 50  0001 C CNN
+F 4 "https://www.tme.eu/pl/details/cl10b105ka8nnnc/kondensatory-mlcc-smd-0603/samsung/" H 2000 4150 50  0001 C CNN "1st Disrtib Link"
+F 5 "SAMSUNG/CL10B105KA8NNNC" H 2000 4150 50  0001 C CNN "Manufacturer"
 	1    2000 4150
 	1    0    0    -1  
 $EndComp
@@ -327,6 +344,8 @@ F 0 "D1" H 1250 3350 50  0000 L CNN
 F 1 "SMBD914E6327HTSA1" H 1150 3370 50  0001 L CNN
 F 2 "Diodes_SMD:D_SOT-23_ANK" V 1300 3450 50  0001 C CNN
 F 3 "" V 1300 3450 50  0001 C CNN
+F 4 "https://www.tme.eu/pl/details/smbd914e6327htsa1/diody-uniwersalne-smd/infineon-technologies/" H 1300 3450 50  0001 C CNN "1st Disrtib Link"
+F 5 "INFINEON " H 1300 3450 50  0001 C CNN "Manufacturer"
 	1    1300 3450
 	-1   0    0    1   
 $EndComp
@@ -338,6 +357,8 @@ F 0 "R3" V 5630 1250 50  0000 C CNN
 F 1 "10k" V 5550 1250 50  0000 C CNN
 F 2 "Resistors_SMD:R_0603" V 5480 1250 50  0001 C CNN
 F 3 "" H 5550 1250 50  0001 C CNN
+F 4 "https://www.tme.eu/pl/details/wf06p-10k-5%25/rezystory-smd-0603/walsin/wf06p103jtl/" H 5550 1250 50  0001 C CNN "1st Disrtib Link"
+F 5 "WALSIN/WF06P103JTL" H 5550 1250 50  0001 C CNN "Manufacturer"
 	1    5550 1250
 	-1   0    0    1   
 $EndComp
@@ -386,6 +407,8 @@ F 0 "C1" H 1460 4520 50  0000 L CNN
 F 1 "220p" H 1460 4370 50  0000 L CNN
 F 2 "Capacitors_SMD:C_0603" H 1450 4450 50  0001 C CNN
 F 3 "" H 1450 4450 50  0001 C CNN
+F 4 "https://www.tme.eu/pl/details/vj0603y221kxacw2bc/kondensatory-mlcc-smd-0603/vishay/" H 1450 4450 50  0001 C CNN "1st Disrtib Link"
+F 5 "VISHAY/VJ0603Y221KXACW2BC" H 1450 4450 50  0001 C CNN "Manufacturer"
 	1    1450 4450
 	1    0    0    -1  
 $EndComp
@@ -397,6 +420,8 @@ F 0 "R1" V 850 4200 50  0000 C CNN
 F 1 "1k" V 750 4200 50  0000 C CNN
 F 2 "Resistors_SMD:R_0603" V 680 4200 50  0001 C CNN
 F 3 "" H 750 4200 50  0001 C CNN
+F 4 "https://www.tme.eu/pl/details/smd0603-1k/rezystory-smd-0603/royal-ohm/0603saj0102t5e/" H 750 4200 50  0001 C CNN "1st Disrtib Link"
+F 5 "ROYAL OHM/0603SAJ0102T5E" H 750 4200 50  0001 C CNN "Manufacturer"
 	1    750  4200
 	0    1    1    0   
 $EndComp
@@ -456,6 +481,8 @@ F 0 "J4" H 6300 2650 50  0000 L CNN
 F 1 "USB_A" H 6300 2550 50  0000 L CNN
 F 2 "usb_ccb_custom:USB_A_DS1097R" H 6650 2150 50  0001 C CNN
 F 3 "" H 6650 2150 50  0001 C CNN
+F 4 "https://www.maritex.com.pl/zlacza/zlacza_usb_hdmi_ieee/zlacza_i_kable_usb/wtyk_usb_1xa4_katowy/usbp1arw-cv.html" H 6500 2200 50  0001 C CNN "1st Disrtib Link"
+F 5 "CVILUX/CU01PAH0000 " H 6500 2200 50  0001 C CNN "Manufacturer"
 	1    6500 2200
 	-1   0    0    -1  
 $EndComp
@@ -467,6 +494,8 @@ F 0 "U3" H 10200 1600 60  0000 C CNN
 F 1 "MCP1700T-3302E/TT" H 10650 1050 60  0000 C CNN
 F 2 "TO_SOT_Packages_SMD:SOT-23" H 10400 1104 60  0001 C CNN
 F 3 "" H 10350 1400 60  0000 C CNN
+F 4 "https://octopart.com/mcp1700t-3302e%2Ftt-microchip-535742?r=sp&s=7X4ED658TtW6VxzY9__15g" H 10350 1400 50  0001 C CNN "1st Disrtib Link"
+F 5 "Microchip" H 10350 1400 50  0001 C CNN "Manufacturer"
 	1    10350 1400
 	1    0    0    -1  
 $EndComp
@@ -522,6 +551,8 @@ F 0 "C5" H 10065 1546 50  0000 L CNN
 F 1 "100n" H 10065 1455 50  0000 L CNN
 F 2 "Capacitors_SMD:C_0402" H 9988 1350 50  0001 C CNN
 F 3 "" H 9950 1500 50  0000 C CNN
+F 4 "https://www.tme.eu/pl/details/c0402c104k8pac/kondensatory-mlcc-smd-0402/kemet/c0402c104k8pactu/" H 9950 1500 50  0001 C CNN "1st Disrtib Link"
+F 5 "KEMET/C0402C104K8PACTU" H 9950 1500 50  0001 C CNN "Manufacturer"
 	1    9950 1500
 	-1   0    0    -1  
 $EndComp
@@ -533,6 +564,8 @@ F 0 "C6" H 10865 1546 50  0000 L CNN
 F 1 "100n" H 10865 1455 50  0000 L CNN
 F 2 "Capacitors_SMD:C_0402" H 10788 1350 50  0001 C CNN
 F 3 "" H 10750 1500 50  0000 C CNN
+F 4 "https://www.tme.eu/pl/details/c0402c104k8pac/kondensatory-mlcc-smd-0402/kemet/c0402c104k8pactu/" H 10750 1500 50  0001 C CNN "1st Disrtib Link"
+F 5 "KEMET/C0402C104K8PACTU" H 10750 1500 50  0001 C CNN "Manufacturer"
 	1    10750 1500
 	1    0    0    -1  
 $EndComp
@@ -555,6 +588,8 @@ F 0 "J1" H 700 2950 50  0000 C CNN
 F 1 "Conn_01x03" H 700 2950 50  0001 C CNN
 F 2 "Pin_Headers:Pin_Header_Straight_1x03_Pitch2.54mm" H 700 3150 50  0001 C CNN
 F 3 "" H 700 3150 50  0001 C CNN
+F 4 "https://www.tme.eu/pl/details/zl201-03g/listwy-i-gniazda-kolkowe/connfly/ds1021-1_3sf1-1/" H 700 3150 50  0001 C CNN "1st Disrtib Link"
+F 5 "CONNFLY/DS1021-1*3SF1-1" H 700 3150 50  0001 C CNN "Manufacturer"
 	1    700  3150
 	-1   0    0    1   
 $EndComp
@@ -566,6 +601,8 @@ F 0 "C3" H 3315 3246 50  0000 L CNN
 F 1 "100n" H 3315 3155 50  0000 L CNN
 F 2 "Capacitors_SMD:C_0402" H 3238 3050 50  0001 C CNN
 F 3 "" H 3200 3200 50  0000 C CNN
+F 4 "https://www.tme.eu/pl/details/c0402c104k8pac/kondensatory-mlcc-smd-0402/kemet/c0402c104k8pactu/" H 3200 3200 50  0001 C CNN "1st Disrtib Link"
+F 5 "KEMET/C0402C104K8PACTU" H 3200 3200 50  0001 C CNN "Manufacturer"
 	1    3200 3200
 	-1   0    0    -1  
 $EndComp
@@ -588,6 +625,8 @@ F 0 "C4" H 6215 2996 50  0000 L CNN
 F 1 "100n" H 6215 2905 50  0000 L CNN
 F 2 "Capacitors_SMD:C_0402" H 6138 2800 50  0001 C CNN
 F 3 "" H 6100 2950 50  0000 C CNN
+F 4 "https://www.tme.eu/pl/details/c0402c104k8pac/kondensatory-mlcc-smd-0402/kemet/c0402c104k8pactu/" H 6100 2950 50  0001 C CNN "1st Disrtib Link"
+F 5 "KEMET/C0402C104K8PACTU" H 6100 2950 50  0001 C CNN "Manufacturer"
 	1    6100 2950
 	1    0    0    -1  
 $EndComp
@@ -876,6 +915,8 @@ F 0 "D3" H 550 4150 50  0000 L CNN
 F 1 "SMBD914E6327HTSA1" H 450 3970 50  0001 L CNN
 F 2 "Diodes_SMD:D_SOT-23_ANK" V 600 4050 50  0001 C CNN
 F 3 "" V 600 4050 50  0001 C CNN
+F 4 "https://www.tme.eu/pl/details/smbd914e6327htsa1/diody-uniwersalne-smd/infineon-technologies/" H 600 4050 50  0001 C CNN "1st Disrtib Link"
+F 5 "INFINEON " H 600 4050 50  0001 C CNN "Manufacturer"
 	1    600  4050
 	0    1    1    0   
 $EndComp
