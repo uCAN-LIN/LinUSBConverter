@@ -594,15 +594,15 @@ F 5 "CONNFLY/DS1021-1*3SF1-1" H 700 3150 50  0001 C CNN "Manufacturer"
 	-1   0    0    1   
 $EndComp
 $Comp
-L LIN_USB_CONVERTER-rescue:C-RESCUE-LIN_USB_CONVERTER C3
+L LIN_USB_CONVERTER-rescue:C-RESCUE-LIN_USB_CONVERTER C7
 U 1 1 5A6A648D
 P 3200 3200
-F 0 "C3" H 3315 3246 50  0000 L CNN
-F 1 "100n" H 3315 3155 50  0000 L CNN
+F 0 "C7" H 3100 3300 50  0000 L CNN
+F 1 "10u" H 3050 3100 50  0000 L CNN
 F 2 "Capacitors_SMD:C_0402" H 3238 3050 50  0001 C CNN
 F 3 "" H 3200 3200 50  0000 C CNN
-F 4 "https://www.tme.eu/pl/details/c0402c104k8pac/kondensatory-mlcc-smd-0402/kemet/c0402c104k8pactu/" H 3200 3200 50  0001 C CNN "1st Disrtib Link"
-F 5 "KEMET/C0402C104K8PACTU" H 3200 3200 50  0001 C CNN "Manufacturer"
+F 4 "https://www.tme.eu/pl/details/cl05a106mq5nunc/kondensatory-mlcc-smd-0402/samsung/" H 3200 3200 50  0001 C CNN "1st Disrtib Link"
+F 5 "SAMSUNG/CL05A106MQ5NUNC" H 3200 3200 50  0001 C CNN "Manufacturer"
 	1    3200 3200
 	-1   0    0    -1  
 $EndComp
@@ -949,8 +949,6 @@ Wire Wire Line
 Wire Wire Line
 	950  3550 950  3800
 Wire Wire Line
-	3200 3350 2850 3350
-Wire Wire Line
 	2450 3050 2850 3050
 Wire Wire Line
 	3050 3450 3300 3450
@@ -960,4 +958,27 @@ Wire Wire Line
 	4550 3450 4750 3450
 Wire Wire Line
 	4450 3550 4750 3550
+Wire Wire Line
+	3200 2900 2950 2900
+Wire Wire Line
+	2950 2900 2950 3050
+Connection ~ 3200 2900
+Wire Wire Line
+	2850 3350 2950 3350
+$Comp
+L LIN_USB_CONVERTER-rescue:C-RESCUE-LIN_USB_CONVERTER C3
+U 1 1 5AB17A84
+P 2950 3200
+F 0 "C3" H 2950 3300 50  0000 L CNN
+F 1 "100n" H 2950 3100 50  0000 L CNN
+F 2 "Capacitors_SMD:C_0402" H 2988 3050 50  0001 C CNN
+F 3 "" H 2950 3200 50  0000 C CNN
+F 4 "https://www.tme.eu/pl/details/c0402c104k8pac/kondensatory-mlcc-smd-0402/kemet/c0402c104k8pactu/" H 2950 3200 50  0001 C CNN "1st Disrtib Link"
+F 5 "KEMET/C0402C104K8PACTU" H 2950 3200 50  0001 C CNN "Manufacturer"
+	1    2950 3200
+	1    0    0    -1  
+$EndComp
+Connection ~ 2950 3350
+Wire Wire Line
+	2950 3350 3200 3350
 $EndSCHEMATC

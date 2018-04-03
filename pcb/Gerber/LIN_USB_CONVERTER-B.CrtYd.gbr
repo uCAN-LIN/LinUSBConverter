@@ -1,16 +1,18 @@
+G04 #@! TF.GenerationSoftware,KiCad,Pcbnew,(2018-02-16 revision c95340fba)-makepkg*
+G04 #@! TF.CreationDate,2018-03-22T22:09:09+01:00*
+G04 #@! TF.ProjectId,LIN_USB_CONVERTER,4C494E5F5553425F434F4E5645525445,rev?*
+G04 #@! TF.SameCoordinates,Original*
 G04 #@! TF.FileFunction,Other,User*
 %FSLAX46Y46*%
 G04 Gerber Fmt 4.6, Leading zero omitted, Abs format (unit mm)*
-G04 Created by KiCad (PCBNEW 4.0.7) date 01/29/18 07:06:24*
+G04 Created by KiCad (PCBNEW (2018-02-16 revision c95340fba)-makepkg) date 03/22/18 22:09:09*
 %MOMM*%
 %LPD*%
 G01*
 G04 APERTURE LIST*
-%ADD10C,0.100000*%
-%ADD11C,0.050000*%
+%ADD10C,0.050000*%
 G04 APERTURE END LIST*
 D10*
-D11*
 X150408000Y-80082000D02*
 G75*
 G03X150408000Y-80082000I-1550000J0D01*
