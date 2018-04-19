@@ -269,12 +269,12 @@ $EndComp
 $Comp
 L LIN_USB_CONVERTER-rescue:+BATT-RESCUE-LIN_USB_CONVERTER #PWR010
 U 1 1 5A6A2468
-P 1200 3150
-F 0 "#PWR010" H 1200 3000 50  0001 C CNN
-F 1 "+BATT" H 1200 3290 50  0000 C CNN
-F 2 "" H 1200 3150 50  0001 C CNN
-F 3 "" H 1200 3150 50  0001 C CNN
-	1    1200 3150
+P 1400 3300
+F 0 "#PWR010" H 1400 3150 50  0001 C CNN
+F 1 "+BATT" H 1400 3440 50  0000 C CNN
+F 2 "" H 1400 3300 50  0001 C CNN
+F 3 "" H 1400 3300 50  0001 C CNN
+	1    1400 3300
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -339,14 +339,14 @@ $EndComp
 $Comp
 L LIN_USB_CONVERTER-rescue:D_Small_ALT-RESCUE-LIN_USB_CONVERTER D1
 U 1 1 5A6A2C4B
-P 1300 3450
-F 0 "D1" H 1250 3350 50  0000 L CNN
-F 1 "SMBD914E6327HTSA1" H 1150 3370 50  0001 L CNN
-F 2 "Diodes_SMD:D_SOT-23_ANK" V 1300 3450 50  0001 C CNN
-F 3 "" V 1300 3450 50  0001 C CNN
-F 4 "https://www.tme.eu/pl/details/smbd914e6327htsa1/diody-uniwersalne-smd/infineon-technologies/" H 1300 3450 50  0001 C CNN "1st Disrtib Link"
-F 5 "INFINEON " H 1300 3450 50  0001 C CNN "Manufacturer"
-	1    1300 3450
+P 1250 3450
+F 0 "D1" H 1200 3350 50  0000 L CNN
+F 1 "SMBD914E6327HTSA1" H 1100 3370 50  0001 L CNN
+F 2 "Diodes_SMD:D_SOT-23_ANK" V 1250 3450 50  0001 C CNN
+F 3 "" V 1250 3450 50  0001 C CNN
+F 4 "https://www.tme.eu/pl/details/smbd914e6327htsa1/diody-uniwersalne-smd/infineon-technologies/" H 1250 3450 50  0001 C CNN "1st Disrtib Link"
+F 5 "INFINEON " H 1250 3450 50  0001 C CNN "Manufacturer"
+	1    1250 3450
 	-1   0    0    1   
 $EndComp
 $Comp
@@ -548,7 +548,7 @@ L LIN_USB_CONVERTER-rescue:C-RESCUE-LIN_USB_CONVERTER C5
 U 1 1 5A6A5F1C
 P 9950 1500
 F 0 "C5" H 10065 1546 50  0000 L CNN
-F 1 "100n" H 10065 1455 50  0000 L CNN
+F 1 "1u" H 10065 1455 50  0000 L CNN
 F 2 "Capacitors_SMD:C_0402" H 9988 1350 50  0001 C CNN
 F 3 "" H 9950 1500 50  0000 C CNN
 F 4 "https://www.tme.eu/pl/details/c0402c104k8pac/kondensatory-mlcc-smd-0402/kemet/c0402c104k8pactu/" H 9950 1500 50  0001 C CNN "1st Disrtib Link"
@@ -561,7 +561,7 @@ L LIN_USB_CONVERTER-rescue:C-RESCUE-LIN_USB_CONVERTER C6
 U 1 1 5A6A6053
 P 10750 1500
 F 0 "C6" H 10865 1546 50  0000 L CNN
-F 1 "100n" H 10865 1455 50  0000 L CNN
+F 1 "1u" H 10865 1455 50  0000 L CNN
 F 2 "Capacitors_SMD:C_0402" H 10788 1350 50  0001 C CNN
 F 3 "" H 10750 1500 50  0000 C CNN
 F 4 "https://www.tme.eu/pl/details/c0402c104k8pac/kondensatory-mlcc-smd-0402/kemet/c0402c104k8pactu/" H 10750 1500 50  0001 C CNN "1st Disrtib Link"
@@ -599,7 +599,7 @@ U 1 1 5A6A648D
 P 3200 3200
 F 0 "C7" H 3100 3300 50  0000 L CNN
 F 1 "10u" H 3050 3100 50  0000 L CNN
-F 2 "Capacitors_SMD:C_0402" H 3238 3050 50  0001 C CNN
+F 2 "Capacitors_SMD:C_0603" H 3238 3050 50  0001 C CNN
 F 3 "" H 3200 3200 50  0000 C CNN
 F 4 "https://www.tme.eu/pl/details/cl05a106mq5nunc/kondensatory-mlcc-smd-0402/samsung/" H 3200 3200 50  0001 C CNN "1st Disrtib Link"
 F 5 "SAMSUNG/CL05A106MQ5NUNC" H 3200 3200 50  0001 C CNN "Manufacturer"
@@ -703,12 +703,7 @@ Wire Wire Line
 Wire Wire Line
 	3100 3650 2750 3650
 Wire Wire Line
-	1200 3450 1200 3150
-Connection ~ 1200 3450
-Wire Wire Line
 	1700 3450 1750 3450
-Wire Wire Line
-	900  3450 1200 3450
 Wire Wire Line
 	1700 4000 2000 4000
 Wire Wire Line
@@ -759,7 +754,6 @@ Wire Wire Line
 Connection ~ 950  3550
 Wire Wire Line
 	900  3450 900  3250
-Connection ~ 900  3450
 Connection ~ 3200 3350
 Wire Wire Line
 	3200 3050 3200 2900
@@ -918,7 +912,7 @@ F 3 "" V 600 4050 50  0001 C CNN
 F 4 "https://www.tme.eu/pl/details/smbd914e6327htsa1/diody-uniwersalne-smd/infineon-technologies/" H 600 4050 50  0001 C CNN "1st Disrtib Link"
 F 5 "INFINEON " H 600 4050 50  0001 C CNN "Manufacturer"
 	1    600  4050
-	0    1    1    0   
+	0    -1   -1   0   
 $EndComp
 Wire Wire Line
 	600  4150 600  4200
@@ -981,4 +975,12 @@ $EndComp
 Connection ~ 2950 3350
 Wire Wire Line
 	2950 3350 3200 3350
+Wire Wire Line
+	1400 3300 1400 3450
+Wire Wire Line
+	1400 3450 1350 3450
+Connection ~ 1400 3450
+Wire Wire Line
+	1150 3450 900  3450
+Connection ~ 900  3450
 $EndSCHEMATC
