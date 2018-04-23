@@ -42,12 +42,13 @@ void bootloaderSwitcher(){
     HAL_FLASHEx_OBGetConfig(&OBParam);
 
     ttt = OBParam.USERConfig;
-
-    if((OBParam.USERConfig & OB_BOOT0_SET) == 0)
+    // BOOT_SEL = 0, nBOOT0 = 1
+    if(((OBParam.USERConfig & OB_BOOT0_SET) == 0) || ((OBParam.USERConfig & OB_BOOT_SEL_SET) == OB_BOOT_SEL_SET))
     {
 
         OBParam.OptionType = OPTIONBYTE_USER;
         OBParam.USERConfig = OBParam.USERConfig | OB_BOOT0_SET;
+        OBParam.USERConfig = OBParam.USERConfig & (~OB_BOOT_SEL_SET);
 
         HAL_FLASH_Unlock();
         HAL_FLASH_OB_Unlock();

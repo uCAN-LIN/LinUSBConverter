@@ -116,6 +116,13 @@ void lin_slcan_rx_timeout_handler()
 {
 	if (slcan_state == SLCAN_STATE_OPEN)
 	{
+		if (slcan_lin_slave_state_data_count == 0)
+		{
+			/* header send no respone */
+			open_lin_data_layer_frame.lenght = 0;
+			lin_slcan_rx_handler(&open_lin_data_layer_frame);
+		} else
+		{
 		open_lin_data_layer_frame.lenght = slcan_lin_slave_state_data_count - 1;
 		/* checksum calculation */
 		if (slcan_lin_data_array[open_lin_data_layer_frame.lenght] == open_lin_data_layer_checksum(open_lin_data_layer_frame.pid,
@@ -123,6 +130,7 @@ void lin_slcan_rx_timeout_handler()
 		{
 			/* valid checksum */
 			lin_slcan_rx_handler(&open_lin_data_layer_frame);
+		}
 		}
 	}
 	lin_slcan_reset();
@@ -176,13 +184,14 @@ void lin_slcan_rx(l_u8 rx_byte)
 					lin_slcan_reset();
 				}
 				slcan_lin_slave_state = OPEN_LIN_SLAVE_DATA_RX;
+				// slcan_lin_timeout handled in sys timer interrupt function
+				slcan_lin_timeout_counter = HAL_GetTick();
 				break;
 			}
 			case (OPEN_LIN_SLAVE_DATA_RX):
 			{
-				// slcan_lin_timeout handled in sys timer interrupt function
-				slcan_lin_timeout_counter = HAL_GetTick();
 
+				slcan_lin_timeout_counter = HAL_GetTick();
 				if (slcan_lin_slave_state_data_count < 8)
 				{
 					open_lin_data_layer_frame.data_ptr[slcan_lin_slave_state_data_count] = rx_byte;
