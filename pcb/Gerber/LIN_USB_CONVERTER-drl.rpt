@@ -1,5 +1,5 @@
 Drill report for D:/GIThub/LinUSBConverter/pcb/LIN_USB_CONVERTER.kicad_pcb
-Created on 19.04.2018 06:34:34
+Created on 01.05.2018 15:12:19
 
 Copper Layer Stackup:
     =============================================================
@@ -10,13 +10,13 @@ Copper Layer Stackup:
 Drill file 'LIN_USB_CONVERTER-PTH.drl' contains
     plated through holes:
     =============================================================
-    T1  0,40mm  0,016"  (13 holes)
+    T1  0,40mm  0,016"  (9 holes)
     T2  1,00mm  0,039"  (7 holes)  (with 2 slots)
     T3  1,00mm  0,039"  (4 holes)
     T4  1,32mm  0,052"  (3 holes)
     T5  2,00mm  0,079"  (1 hole)
 
-    Total plated holes count 28
+    Total plated holes count 24
 
 
 Drill file 'LIN_USB_CONVERTER-NPTH.drl' contains
