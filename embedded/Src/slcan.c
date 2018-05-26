@@ -261,7 +261,7 @@ void slCanCheckCommand()
                 addLinMasterRow(line);
                 slcanSetOutputChar('z');
                 result = terminator;
-            } else
+            } else /* LIN_SLAVE */
             {
                 if (slcan_state == SLCAN_STATE_OPEN)
                 {

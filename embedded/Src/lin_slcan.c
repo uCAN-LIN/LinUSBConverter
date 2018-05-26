@@ -143,6 +143,7 @@ void lin_slcan_skip_header_reception(uint8_t pid)
 	slcan_lin_slave_state = OPEN_LIN_SLAVE_DATA_RX;
 	open_lin_data_layer_frame.pid = pid;
 	open_lin_data_layer_frame.data_ptr = slcan_lin_data_array;
+	slcan_lin_timeout_counter = HAL_GetTick();
 }
 
 void lin_slcan_rx(l_u8 rx_byte)
