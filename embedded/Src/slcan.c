@@ -163,9 +163,12 @@ static uint8_t transmitStd(uint8_t* line) {
     if (lin_data)
     {
     	open_lin_master_data_tx_data(&slot);
+    	/* reset data reception state machine */
+    	open_lin_hw_reset();
+    	lin_slcan_reset();
     } else
     {
-    	/* set data recepcion state machine */
+    	/* set data reception state machine */
     	lin_slcan_skip_header_reception(slot.pid);
     }
     return 1;

@@ -87,6 +87,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Src</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Src</locationURI>
+		</link>
+		<link>
 			<name>Application/TrueSTUDIO</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -307,6 +312,11 @@
 			<locationURI>PARENT-2-PROJECT_LOC/Src/open-LIN-c/README.md</locationURI>
 		</link>
 		<link>
+			<name>Application/User/open-LIN-c/implementation</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>Application/User/open-LIN-c/open_lin_cfg.h</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Src/open-LIN-c/open_lin_cfg.h</locationURI>
@@ -397,9 +407,19 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Application/User/open-LIN-c/.git/objects</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>Application/User/open-LIN-c/.git/packed-refs</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Src/open-LIN-c/.git/packed-refs</locationURI>
+		</link>
+		<link>
+			<name>Application/User/open-LIN-c/.git/refs</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>Application/User/open-LIN-c/implementation/ST32</name>
@@ -470,6 +490,11 @@
 			<name>Application/User/open-LIN-c/.git/logs/HEAD</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Src/open-LIN-c/.git/logs/HEAD</locationURI>
+		</link>
+		<link>
+			<name>Application/User/open-LIN-c/.git/logs/refs</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>Application/User/open-LIN-c/.git/objects/06</name>
@@ -802,6 +827,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Application/User/open-LIN-c/.git/refs/remotes</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>Application/User/open-LIN-c/implementation/ST32/open_lin_hw_st32.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Src/open-LIN-c/implementation/ST32/open_lin_hw_st32.c</locationURI>
@@ -853,6 +883,11 @@
 		</link>
 		<link>
 			<name>Application/User/open-LIN-c/.git/logs/refs/heads</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Application/User/open-LIN-c/.git/logs/refs/remotes</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
