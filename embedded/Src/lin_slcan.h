@@ -13,5 +13,4 @@ uint8_t addLinMasterRow(uint8_t* line);
 void lin_slcan_rx(l_u8 rx_byte);
 void lin_slcan_rx_timeout_handler();
 void lin_slcan_skip_header_reception(uint8_t pid);
-void lin_slcan_reset(void);
 #endif /* LIN_SLCAN_H_ */
