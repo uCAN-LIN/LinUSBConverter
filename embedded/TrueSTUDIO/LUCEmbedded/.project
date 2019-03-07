@@ -87,11 +87,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>Src</name>
-			<type>2</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Src</locationURI>
-		</link>
-		<link>
 			<name>Application/TrueSTUDIO</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
