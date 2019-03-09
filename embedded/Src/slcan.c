@@ -141,7 +141,7 @@ static uint8_t transmitStd(uint8_t* line) {
     bool lin_data = (line[0] == 't');
 
     slot.data_ptr = data_buff;
-    if (line[0] > 'z') return 0;
+    if (line[0] > 'Z') return 0;
     // id
     if (!parseHex(&line[1], 3, &temp)) return 0;
     	slot.pid = open_lin_data_layer_parity((open_lin_pid_t)temp); // add parity
@@ -277,7 +277,7 @@ void slCanCheckCommand()
                 if (line[0] < 'Z') slcanSetOutputChar('Z');
 				else slcanSetOutputChar('z');
                 result = terminator;
-            } else /* LIN_SLAVE */
+            } else /* Lin_Monitor */
             {
                 if (slcan_state == SLCAN_STATE_OPEN)
                 {

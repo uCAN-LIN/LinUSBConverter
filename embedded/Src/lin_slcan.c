@@ -26,10 +26,15 @@ t_master_frame_table_item* slcan_get_master_table_row(open_lin_pid_t id, int8_t*
 	return &master_frame_table[i];
 }
 /*
- * t456       3112233 : can_id 0x456, can_dlc 3, data 0x11 0x22 0x33
- * T12A BCDEF 2AA55 : extended can_id 0x12ABCDEF, can_dlc 2, data 0xAA 0x55
+ * t016       3 112233 : id 0x16, dlc 3, data 0x11 0x22 0x33
+ * T02BA015 0 2 AA55 : extended id 0x2B period 0xA0 timeout 0x15 , dlc 2, data 0xAA 0x55
+ *
  * r1230 : can_id 0x123, can_dlc 0, no data, remote transmission request
  */
+
+
+//T013151502AA55
+//t0163112233
 
 uint8_t addLinMasterRow(uint8_t* line) {
     uint32_t temp;
@@ -37,7 +42,7 @@ uint8_t addLinMasterRow(uint8_t* line) {
     t_master_frame_table_item* array_ptr = 0;
     uint16_t tFrame_Max_ms;
     uint8_t offset = 0;
-    if (line[0] > 'z')
+    if (line[0] < 'Z')
     	offset = 5;
     // reset schedule table
     if (line[1] == '2')
@@ -69,14 +74,14 @@ uint8_t addLinMasterRow(uint8_t* line) {
     array_ptr->slot.data_length = temp;
 
     // type
-    if (line[0] == 'r')
+    if ((line[0] == 'r') || (line[0] == 'R'))
     	array_ptr->slot.frame_type = OPEN_LIN_FRAME_TYPE_RECEIVE;
 	else
 		array_ptr->slot.frame_type = OPEN_LIN_FRAME_TYPE_TRANSMIT;
     // data
     array_ptr->slot.data_ptr = &(lin_master_data[out_index * 8]); //data is later set in case of override
     // period
-    if (line[0] > 'z')
+    if (line[0] < 'Z') // if upper case
     {
     	if (!parseHex(&line[4], 2, &temp)) return 0;
     	array_ptr->offset_ms = temp;
