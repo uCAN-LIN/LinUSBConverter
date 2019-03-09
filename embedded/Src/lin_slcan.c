@@ -25,13 +25,20 @@ t_master_frame_table_item* slcan_get_master_table_row(open_lin_pid_t id, int8_t*
 	(*out_index) = i;
 	return &master_frame_table[i];
 }
+/*
+ * t456       3112233 : can_id 0x456, can_dlc 3, data 0x11 0x22 0x33
+ * T12A BCDEF 2AA55 : extended can_id 0x12ABCDEF, can_dlc 2, data 0xAA 0x55
+ * r1230 : can_id 0x123, can_dlc 0, no data, remote transmission request
+ */
 
 uint8_t addLinMasterRow(uint8_t* line) {
     uint32_t temp;
     int8_t i,out_index;
     t_master_frame_table_item* array_ptr = 0;
     uint16_t tFrame_Max_ms;
-
+    uint8_t offset = 0;
+    if (line[0] > 'z')
+    	offset = 5;
     // reset schedule table
     if (line[1] == '2')
     {
@@ -57,7 +64,7 @@ uint8_t addLinMasterRow(uint8_t* line) {
 
     array_ptr->slot.pid= temp;
     // len
-    if (!parseHex(&line[4], 1, &temp)) return 0;
+    if (!parseHex(&line[4 + offset], 1, &temp)) return 0;
     if (array_ptr->slot.data_length  > 8) return 0;
     array_ptr->slot.data_length = temp;
 
@@ -69,16 +76,25 @@ uint8_t addLinMasterRow(uint8_t* line) {
     // data
     array_ptr->slot.data_ptr = &(lin_master_data[out_index * 8]); //data is later set in case of override
     // period
-    array_ptr->offset_ms = 15;
-    // timeout
-    tFrame_Max_ms = (((uint16_t)array_ptr->slot.data_length * 10 + 44) * 7 / 100) + 1;
-    array_ptr->response_wait_ms = (uint8_t)(tFrame_Max_ms);
+    if (line[0] > 'z')
+    {
+    	if (!parseHex(&line[4], 2, &temp)) return 0;
+    	array_ptr->offset_ms = temp;
+    	if (!parseHex(&line[6], 2, &temp)) return 0;
+    	array_ptr->response_wait_ms	= temp;
+    } else
+    {
+		array_ptr->offset_ms = 15;
+		// timeout
+		tFrame_Max_ms = (((uint16_t)array_ptr->slot.data_length * 10U + 44U) * 7U / 100U) + 1;
+		array_ptr->response_wait_ms = (uint8_t)(tFrame_Max_ms);
+    }
 
     if (array_ptr->slot.frame_type == OPEN_LIN_FRAME_TYPE_TRANSMIT)
     {
         for (i = 0; i < array_ptr->slot.data_length; i++)
         {
-            if (!parseHex(&line[5+i*2], 2, &temp)) return 0;
+            if (!parseHex(&line[5 + offset + i * 2], 2, &temp)) return 0;
             array_ptr->slot.data_ptr[i] = temp;
         }
     }
@@ -148,7 +164,6 @@ void lin_slcan_skip_header_reception(uint8_t pid)
 
 void lin_slcan_rx(l_u8 rx_byte)
 {
-	volatile l_u8 tmp = rx_byte;
 	if (open_lin_hw_check_for_break() == l_true)
 	{
 		lin_slcan_reset();

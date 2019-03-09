@@ -141,7 +141,7 @@ static uint8_t transmitStd(uint8_t* line) {
     bool lin_data = (line[0] == 't');
 
     slot.data_ptr = data_buff;
-
+    if (line[0] > 'z') return 0;
     // id
     if (!parseHex(&line[1], 3, &temp)) return 0;
     	slot.pid = open_lin_data_layer_parity((open_lin_pid_t)temp); // add parity
@@ -176,6 +176,9 @@ static uint8_t transmitStd(uint8_t* line) {
  * @param  line Line string to parse
  * @retval None
  */
+extern void MX_USART1_UART_Init(void);
+extern uint32_t lin_baund_rate;
+
 void slCanCheckCommand()
 {
 	uint8_t result = SLCAN_BELL;
@@ -198,6 +201,17 @@ void slCanCheckCommand()
         case 'G':
         case 'W':
         case 's':
+        	if (line[0] == '2')
+        	{
+        		lin_baund_rate = 9600;
+        	} else
+        	{
+        		lin_baund_rate = 19200;
+
+        	}
+        	MX_USART1_UART_Init();
+        	open_lin_hw_reset();
+
         case 'F': // Read status flags
       		result = terminator;
             break;
@@ -254,35 +268,16 @@ void slCanCheckCommand()
             break;
 
         case 'R':
-            break;
         case 'r': // Transmit header
-
-            if (lin_type == LIN_MASTER)
-            {
-                addLinMasterRow(line);
-                slcanSetOutputChar('z');
-                result = terminator;
-            } else /* LIN_SLAVE */
-            {
-                if (slcan_state == SLCAN_STATE_OPEN)
-                {
-                    if (transmitStd(line) == HAL_OK) {
-                        if (line[0] < 'Z') slcanSetOutputChar('Z');
-                        else slcanSetOutputChar('z');
-                        result = terminator;
-                    }
-                }
-            }
-            break;
         case 'T':
-            break;
         case 't': // Transmit full frame
             if (lin_type == LIN_MASTER)
             {
                 addLinMasterRow(line);
-                slcanSetOutputChar('z');
+                if (line[0] < 'Z') slcanSetOutputChar('Z');
+				else slcanSetOutputChar('z');
                 result = terminator;
-            } else
+            } else /* LIN_SLAVE */
             {
                 if (slcan_state == SLCAN_STATE_OPEN)
                 {

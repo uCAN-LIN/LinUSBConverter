@@ -9,8 +9,8 @@
 #include "open_lin_network_layer.h"
 #include "open_lin_hw.h"
 
-#define VERSION_FIRMWARE_MAJOR 0
-#define VERSION_FIRMWARE_MINOR 2
+#define VERSION_FIRMWARE_MAJOR 1
+#define VERSION_FIRMWARE_MINOR 0
 
 #define VERSION_HARDWARE_MAJOR 0
 #define VERSION_HARDWARE_MINOR 1

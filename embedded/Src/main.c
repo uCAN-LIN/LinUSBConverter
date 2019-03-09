@@ -67,7 +67,7 @@ UART_HandleTypeDef huart1;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_USART1_UART_Init(void);
+void MX_USART1_UART_Init(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -77,6 +77,7 @@ static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN 0 */
 uint32_t serialNumber =0;
 uint8_t Uart2RxFifo;
+uint32_t lin_baund_rate = 19200;
 #define UART_RX_FIFO_SIZE 1
 /* USER CODE END 0 */
 
@@ -187,11 +188,11 @@ void SystemClock_Config(void)
 }
 
 /* USART1 init function */
-static void MX_USART1_UART_Init(void)
+void MX_USART1_UART_Init(void)
 {
 
   huart1.Instance = USART1;
-  huart1.Init.BaudRate = 19200;
+  huart1.Init.BaudRate = lin_baund_rate;
   huart1.Init.WordLength = UART_WORDLENGTH_8B;
   huart1.Init.StopBits = UART_STOPBITS_1;
   huart1.Init.Parity = UART_PARITY_NONE;
