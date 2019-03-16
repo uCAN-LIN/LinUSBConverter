@@ -8,15 +8,17 @@
 #include "open_lin_master_data_layer.h"
 #include "open_lin_network_layer.h"
 #include "open_lin_hw.h"
+#include "open_lin_slave_data_layer.h"
 
 #define VERSION_FIRMWARE_MAJOR 1
-#define VERSION_FIRMWARE_MINOR 0
+#define VERSION_FIRMWARE_MINOR 2
 
 #define VERSION_HARDWARE_MAJOR 0
 #define VERSION_HARDWARE_MINOR 1
 
 #define LINE_MAXLEN 62
 #define MAX_SLAVES_COUNT 16
+#define LIN_SLAVE_SIGNALS 5
 
 #define SLCAN_STATE_CONFIG 0
 #define SLCAN_STATE_OPEN 2
@@ -33,7 +35,8 @@ uint8_t parseHex(uint8_t* line, uint8_t len, uint32_t* value) ;
 
 typedef enum {
     LIN_MASTER,
-    LIN_SLAVE
+    LIN_MONITOR,
+	LIN_SLAVE
 } LinType_t ;
 
 extern LinType_t lin_type;

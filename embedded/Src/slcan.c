@@ -21,8 +21,9 @@
 
 extern int32_t serialNumber;
 
+void RebootToBootloader();
 uint8_t slcan_state = SLCAN_STATE_CONFIG;
-LinType_t lin_type = LIN_SLAVE;
+LinType_t lin_type = LIN_MONITOR;
 static uint8_t terminator = SLCAN_CR;
 
 extern USBD_HandleTypeDef hUsbDeviceFS;
@@ -138,15 +139,18 @@ static uint8_t transmitStd(uint8_t* line) {
     uint32_t temp;
     open_lin_frame_slot_t slot;
     uint8_t data_buff[8];
-    bool lin_data = (line[0] == 't');
+    uint8_t offset = 0;
+
+    bool lin_data = ((line[0] == 't') || (line[0] == 'T'));
 
     slot.data_ptr = data_buff;
-    if (line[0] > 'Z') return 0;
+    if (line[0] < 'Z')
+		offset = 5;
     // id
-    if (!parseHex(&line[1], 3, &temp)) return 0;
+    if (!parseHex(&line[2 + offset], 2, &temp)) return 0;
     	slot.pid = open_lin_data_layer_parity((open_lin_pid_t)temp); // add parity
     // len
-    if (!parseHex(&line[4], 1, &temp)) return 0;
+    if (!parseHex(&line[4 + offset], 1, &temp)) return 0;
     slot.data_length = temp;
 
     if (slot.data_length > 8) return 0;
@@ -154,12 +158,15 @@ static uint8_t transmitStd(uint8_t* line) {
     {
         uint8_t i;
         for (i = 0; i < slot.data_length; i++) {
-            if (!parseHex(&line[5 + i*2], 2, &temp)) return 0;
+            if (!parseHex(&line[5 + offset + i*2], 2, &temp)) return 0;
             slot.data_ptr[i] = temp;
         }
     }
 
-    open_lin_master_data_tx_header(&slot);
+    if (offset == 0)
+    {
+    	open_lin_master_data_tx_header(&slot);
+    }
     if (lin_data)
     {
     	open_lin_master_data_tx_data(&slot);
@@ -183,11 +190,10 @@ void slCanCheckCommand()
 {
 	uint8_t result = SLCAN_BELL;
 	uint8_t *line = command;
-	if (line[0] == 0)
-	{
-		return ;
-	}
+
     switch (line[0]) {
+    	case 0:
+    		return;
     	case 'a':
     	{
     		if (terminator == SLCAN_CR)
@@ -249,12 +255,19 @@ void slCanCheckCommand()
                 result = terminator;
             }
             break;
-        case 'L': // Slave mode
-        case 'l':
+        case 'L': // slave mode
+        	 if (slcan_state == SLCAN_STATE_CONFIG){
+        		 result = terminator;
+				 lin_type = LIN_SLAVE;
+				 slcan_state = SLCAN_STATE_OPEN;
+				 open_lin_hw_reset();
+				 lin_slcan_reset();
+        	 }
+        case 'l':  // monitor
             if (slcan_state == SLCAN_STATE_CONFIG)
             {
 				result = terminator;
-                lin_type = LIN_SLAVE;
+                lin_type = LIN_MONITOR;
                 slcan_state = SLCAN_STATE_OPEN;
             	open_lin_hw_reset();
             	lin_slcan_reset();
@@ -271,23 +284,29 @@ void slCanCheckCommand()
         case 'r': // Transmit header
         case 'T':
         case 't': // Transmit full frame
-            if (lin_type == LIN_MASTER)
-            {
-                addLinMasterRow(line);
-                if (line[0] < 'Z') slcanSetOutputChar('Z');
-				else slcanSetOutputChar('z');
-                result = terminator;
-            } else /* Lin_Monitor */
-            {
-                if (slcan_state == SLCAN_STATE_OPEN)
-                {
-                    if (transmitStd(line) == HAL_OK) {
-                        if (line[0] < 'Z') slcanSetOutputChar('Z');
-                        else slcanSetOutputChar('z');
-                        result = terminator;
-                    }
-                }
-            }
+        	switch (lin_type)
+        	{
+				case LIN_MASTER:
+				case LIN_SLAVE:
+	                if (addLinMasterRow(line) == 1){
+	                	if (line[0] < 'Z') slcanSetOutputChar('Z');
+	                	else slcanSetOutputChar('z');
+	                }
+	                result = terminator;
+					break;
+				case LIN_MONITOR:
+	                if (slcan_state == SLCAN_STATE_OPEN)
+	                {
+	                    if (transmitStd(line) == 1) {
+	                        if (line[0] < 'Z') slcanSetOutputChar('Z');
+	                        else slcanSetOutputChar('z');
+	                        result = terminator;
+	                    }
+	                }
+					break;
+				default:
+					break;
+        	}
             break;
     }
 

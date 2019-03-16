@@ -25,6 +25,7 @@ t_master_frame_table_item* slcan_get_master_table_row(open_lin_pid_t id, int8_t*
 	(*out_index) = i;
 	return &master_frame_table[i];
 }
+
 /*
  * t016       3 112233 : id 0x16, dlc 3, data 0x11 0x22 0x33
  * T02BA015 0 2 AA55 : extended id 0x2B period 0xA0 timeout 0x15 , dlc 2, data 0xAA 0x55
@@ -35,6 +36,8 @@ t_master_frame_table_item* slcan_get_master_table_row(open_lin_pid_t id, int8_t*
 
 //T013151502AA55
 //t0163112233
+
+void open_lin_net_init(t_master_frame_table_item *a_slot_array, l_u8 a_slot_array_len);
 
 uint8_t addLinMasterRow(uint8_t* line) {
     uint32_t temp;
@@ -55,18 +58,21 @@ uint8_t addLinMasterRow(uint8_t* line) {
 
     // start sending
     if (line[1] == '1'){
-    	open_lin_master_dl_init(master_frame_table,master_frame_table_size);
+    	if (lin_type == LIN_SLAVE)
+    	{
+    		open_lin_net_init(master_frame_table,master_frame_table_size);
+    	} else {
+    		open_lin_master_dl_init(master_frame_table,master_frame_table_size);
+    		 //wakeUpLin();
+    	}
         slcan_state = SLCAN_STATE_OPEN;
-        if (lin_type == LIN_MASTER){
-            //wakeUpLin();
-        }
         return 1;
     }
 
     // id
     if (!parseHex(&line[2], 2, &temp)) return 0;
-    array_ptr = slcan_get_master_table_row(temp, &out_index);
 
+	array_ptr = slcan_get_master_table_row(temp, &out_index);
     array_ptr->slot.pid= temp;
     // len
     if (!parseHex(&line[4 + offset], 1, &temp)) return 0;
@@ -133,6 +139,11 @@ void lin_slcan_rx_handler(t_open_lin_data_layer_frame *f)
 	slcanReciveCanFrame(&lin_slcan_slot);
 }
 
+void open_lin_on_rx_frame(open_lin_frame_slot_t *slot)
+{
+	slcanReciveCanFrame(slot);
+}
+
 void lin_slcan_rx_timeout_handler()
 {
 	if (slcan_state == SLCAN_STATE_OPEN)
@@ -156,6 +167,8 @@ void lin_slcan_rx_timeout_handler()
 	}
 	lin_slcan_reset();
 }
+
+
 
 void lin_slcan_skip_header_reception(uint8_t pid)
 {

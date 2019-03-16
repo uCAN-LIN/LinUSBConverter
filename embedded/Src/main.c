@@ -54,6 +54,7 @@
 #include "slcan.h"
 #include "lin_slcan.h"
 
+
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -86,6 +87,12 @@ uint32_t lin_baund_rate = 19200;
   *
   * @retval None
   */
+
+
+
+void bootloaderSwitcher();
+
+
 int main(void)
 {
   /* USER CODE BEGIN 1 */
@@ -94,7 +101,8 @@ int main(void)
 
   /* MCU Configuration----------------------------------------------------------*/
 
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+  /* Reset of all periph
+   * erals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 
   /* USER CODE BEGIN Init */
@@ -230,11 +238,16 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
 	uint8_t rbyte = Uart2RxFifo;
 	if (slcan_state == SLCAN_STATE_OPEN)
 	{
-		if (lin_type == LIN_MASTER)
+		switch (lin_type)
 		{
-		  open_lin_master_dl_rx(rbyte);
-		} else {
-		  lin_slcan_rx(rbyte);
+		case LIN_MASTER:
+			open_lin_master_dl_rx(rbyte);
+			break;
+		case LIN_SLAVE:
+			open_lin_slave_rx_header(rbyte);
+		default: /* Monitor */
+			lin_slcan_rx(rbyte);
+			break;
 		}
 	}
 	HAL_UART_Receive_IT(huart, &Uart2RxFifo, 1);
