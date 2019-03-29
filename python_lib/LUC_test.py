@@ -3,7 +3,7 @@ import LUC
 
 class LUCTesting(unittest.TestCase):
     def setUp(self):
-        self.master = LUC.LUC('COM30')
+        self.master = LUC.LUC('COM8')
         self.slave = LUC.LUC('COM7')
 
         ll = self.master.close()

@@ -79,4 +79,5 @@ class LUC:
         
     def __del__(self):
         self.close()
+        self.ser.flush() 
         self.ser.close()
