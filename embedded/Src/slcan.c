@@ -207,7 +207,7 @@ void slCanCheckCommand()
         case 'G':
         case 'W':
         case 's':
-        	if (line[0] == '2')
+        	if (line[1] == '2')
         	{
         		lin_baund_rate = 9600;
         	} else
@@ -239,6 +239,7 @@ void slCanCheckCommand()
             break;
         case 'N': // Get serial number
             {
+
                 slcanSetOutputChar('N');
                 slcanSetOutputAsHex((uint8_t)(serialNumber));
                 slcanSetOutputAsHex((uint8_t)(serialNumber>>8));

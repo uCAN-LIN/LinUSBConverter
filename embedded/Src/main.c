@@ -76,7 +76,8 @@ void MX_USART1_UART_Init(void);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
-uint32_t serialNumber =0;
+const uint32_t *uid = (uint32_t *)(UID_BASE);
+uint32_t serialNumber = 0;
 uint8_t Uart2RxFifo;
 uint32_t lin_baund_rate = 19200;
 #define UART_RX_FIFO_SIZE 1
@@ -95,6 +96,7 @@ void bootloaderSwitcher();
 
 int main(void)
 {
+	serialNumber = uid[0] ^ uid[1] ^ uid[2];
   /* USER CODE BEGIN 1 */
   bootloaderSwitcher();
   /* USER CODE END 1 */
