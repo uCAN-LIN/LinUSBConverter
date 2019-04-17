@@ -1,0 +1,43 @@
+start: ldf_container
+
+ldf_container: ldf_nodes ldf_signals ldf_frames
+
+ldf_nodes : "Nodes {" [ldf_node_master] [ldf_node_slaves] "}"
+ldf_signals : "Signals {" [ldf_signal (ldf_signal)*] "}"
+ldf_frames : "Frames {" [ldf_frame (ldf_frame)*] "}"
+
+ldf_node_master: "Master:" LDF_NODE_NAME";"
+ldf_node_slaves: "Slaves:" LDF_NODE_NAME";"
+
+ldf_node : LDF_SIGNAL_NAME  ":" WORD ";" 
+ldf_signal :  LDF_SIGNAL_NAME ":" LDF_SIGNAL_SIZE "," LDF_SIGNAL_DEFAULT_VALUE "," LDF_NODE_NAME "," LDF_NODE_NAME ";"
+ldf_frame : LDF_FRAME_NAME  ":" LDF_FRANE_ID "," CNAME "," LDF_FRAME_LEN ["{" (ldf_frame_signal)* "}"]
+
+
+ldf_frame_signal: LDF_SIGNAL_NAME "," LDF_SIGNAL_BIT_OFFSET ";"  
+LDF_FRAME_NAME: CNAME 
+LDF_FRANE_ID : C_INT
+LDF_FRAME_LEN : C_INT
+
+LDF_SIGNAL_DEFAULT_VALUE: C_INITIALIZER_LIST|C_INT
+LDF_SIGNAL_SIZE: C_INT
+LDF_SIGNAL_BIT_OFFSET: C_INT
+LDF_SIGNAL_NAME: CNAME 
+
+LDF_NODE_NAME: CNAME
+
+C_INITIALIZER_LIST: ["{"|"{ "] C_INT (","C_INT)* ["}"|" }"]
+C_INT: "0x"HEXDIGIT+ | HEXDIGIT+ 
+
+
+
+%import common.HEXDIGIT 
+%import common.INT
+%import common.WORD
+%import common.CNAME
+%import common.ESCAPED_STRING
+%import common.SIGNED_NUMBER
+%import common.WS
+%import common.WS_INLINE
+%ignore WS
+%ignore WS_INLINE
