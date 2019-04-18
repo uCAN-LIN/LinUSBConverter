@@ -1,30 +1,30 @@
 start: ldf_container
 
-ldf_container: ldf_nodes ldf_signals ldf_frames
+?ldf_container: ldf_nodes ldf_signals ldf_frames
 
-ldf_nodes : "Nodes {" [ldf_node_master] [ldf_node_slaves] "}"
-ldf_signals : "Signals {" [ldf_signal (ldf_signal)*] "}"
-ldf_frames : "Frames {" [ldf_frame (ldf_frame)*] "}"
+?ldf_nodes : "Nodes {" [ldf_node_master] [ldf_node_slaves] "}" 
+?ldf_signals : "Signals {" [ldf_signal (ldf_signal)*] "}"  
+?ldf_frames : "Frames {" [ldf_frame (ldf_frame)*] "}" 
 
-ldf_node_master: "Master:" LDF_NODE_NAME";"
-ldf_node_slaves: "Slaves:" LDF_NODE_NAME";"
+ldf_node_master: "Master:" ldf_node_name";" 
+ldf_node_slaves: "Slaves:" ldf_node_name";" 
 
-ldf_node : LDF_SIGNAL_NAME  ":" WORD ";" 
-ldf_signal :  LDF_SIGNAL_NAME ":" LDF_SIGNAL_SIZE "," LDF_SIGNAL_DEFAULT_VALUE "," LDF_NODE_NAME "," LDF_NODE_NAME ";"
-ldf_frame : LDF_FRAME_NAME  ":" LDF_FRANE_ID "," CNAME "," LDF_FRAME_LEN ["{" (ldf_frame_signal)* "}"]
+ldf_node : ldf_signal_name  ":" ldf_node_name ";" 
+ldf_signal :  ldf_signal_name ":" ldf_signal_size "," ldf_signal_default_value "," ldf_node_name "," ldf_node_name ";" 
+ldf_frame : ldf_frame_name  ":" ldf_frame_id "," ldf_node_name "," ldf_frame_len ["{" (ldf_frame_signal)* "}"] 
 
 
-ldf_frame_signal: LDF_SIGNAL_NAME "," LDF_SIGNAL_BIT_OFFSET ";"  
-LDF_FRAME_NAME: CNAME 
-LDF_FRANE_ID : C_INT
-LDF_FRAME_LEN : C_INT
+ldf_frame_signal: ldf_signal_name "," ldf_signal_bit_offset ";" 
+ldf_frame_name: CNAME 
+ldf_frame_id : C_INT 
+ldf_frame_len : C_INT 
 
-LDF_SIGNAL_DEFAULT_VALUE: C_INITIALIZER_LIST|C_INT
-LDF_SIGNAL_SIZE: C_INT
-LDF_SIGNAL_BIT_OFFSET: C_INT
-LDF_SIGNAL_NAME: CNAME 
+ldf_signal_default_value: C_INITIALIZER_LIST|C_INT 
+ldf_signal_size: C_INT 
+ldf_signal_bit_offset: C_INT 
+ldf_signal_name: CNAME 
 
-LDF_NODE_NAME: CNAME
+ldf_node_name: CNAME 
 
 C_INITIALIZER_LIST: ["{"|"{ "] C_INT (","C_INT)* ["}"|" }"]
 C_INT: "0x"HEXDIGIT+ | HEXDIGIT+ 
