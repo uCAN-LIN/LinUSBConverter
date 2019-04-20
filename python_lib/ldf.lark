@@ -1,6 +1,6 @@
 start: ldf_container
 
-?ldf_container: ldf_nodes ldf_signals ldf_frames
+?ldf_container: ldf_header ldf_nodes ldf_signals ldf_frames
 
 ?ldf_nodes : "Nodes {" [ldf_node_master] [ldf_node_slaves] "}" 
 ?ldf_signals : "Signals {" [ldf_signal (ldf_signal)*] "}"  
@@ -29,7 +29,11 @@ ldf_node_name: CNAME
 C_INITIALIZER_LIST: ["{"|"{ "] C_INT (","C_INT)* ["}"|" }"]
 C_INT: "0x"HEXDIGIT+ | HEXDIGIT+ 
 
+ldf_header: (ldf_header_lin | ldf_header_channel)*  
+ldf_header_lin : "LIN_"/.*;/
+ldf_header_channel : "Channel_name"/.*;/
 
+%import common._STRING_INNER
 
 %import common.HEXDIGIT 
 %import common.INT

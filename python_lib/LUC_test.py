@@ -15,11 +15,15 @@ class LUCTesting(unittest.TestCase):
 
     def test_firmware_version(self):        
         ll = self.master.reqestFirmwareVersion()
-        self.assertEqual(ll, '0102')
+        self.assertEqual(ll, '0103')
         ll = self.slave.reqestFirmwareVersion()
-        self.assertEqual(ll, '0102')
+        self.assertEqual(ll, '0103')
 
     def test_comunication(self):
+
+        ll = self.master.lowSpeed()
+        ll = self.slave.lowSpeed()
+
         ll = self.master.openAsMaster() 
         ll = self.slave.openAsSlave()       
         self.assertEqual(ll, 1)

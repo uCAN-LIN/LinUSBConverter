@@ -25,6 +25,15 @@ class LUC:
         self.flushData(b'O\r')        
         return (self.ser.readline().decode("utf-8") == '\r')
 
+    def lowSpeed(self):
+        self.flushData(b'S2\r')        
+        return (self.ser.readline().decode("utf-8") == '\r')
+    
+    def highSpeed(self):
+        self.flushData(b'S1\r')        
+        return (self.ser.readline().decode("utf-8") == '\r')
+
+
     def openAsSlave(self):
         self.flushData(b'L\r')        
         return (self.ser.readline().decode("utf-8") == '\r')
