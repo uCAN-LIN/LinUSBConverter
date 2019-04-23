@@ -7,16 +7,12 @@ def ParseIntOrHex(x):
     except ValueError:
         return (int(x,16)) 
 
-class LdfTransformer(Transformer):
-    def ldf_signal(self, data):
-        n,s,d,nm,ns = data
-        return n,s,d,nm,ns 
-    def ldf_frame(self, data):
-        n,i,nn,l,*signals = data
-        return n,i,nn,l,list(signals)
-    def ldf_frame_signal(self,data):
-        n,bo = data
-        return n, bo
+class LDF:
+    def __init__(self,nodes, frames, signals):
+        self.nodes = nodes
+        self.frames = frames
+        self.signals = signals
+
 
 class TreeToJson(Transformer):
     def ldf_node_name(self,s):
@@ -32,17 +28,17 @@ class TreeToJson(Transformer):
     def ldf_node_slaves(self,s):
         return s[0][0:]
 
-    # def ldf_node(self,s):
-        # return s
-
     def ldf_nodes(self,s):
         return {'nodes':s}
     def ldf_signals(self,s):
         return {'signals': s}
     def ldf_frames(self,s):
         return {'frames': s}
+   
+    # ldf_container = dict
     def ldf_container(self,s):
-        return {'ldf': s}
+        return s
+
     def ldf_signal(self,s):
         return {'signal_name':s[0], 'size_bits':s[1], 'default_val': s[2], 'publisher': s[3], 'subscriber': s[4]}
     def ldf_frame(self,s):
@@ -70,19 +66,54 @@ class TreeToJson(Transformer):
             o.append(ParseIntOrHex(x))
         return o
 
-    start = list   
+    # start = dict 
+    def start(self,s):
+        return s[0]
 
+    def ldf_node_atributes(self,s):
+        return
+        # return {"ldf_node_atributes" : "NOT_IMPLEMENTED"}
+    def ldf_node_atributes_node(self,s):
+        return
+        # return {"ldf_node_atributes_node" : "NOT_IMPLEMENTED"}
+
+    def ldf_schedule_table(self,s):
+        return
+        # return {"ldf_schedule_table" : "NOT_IMPLEMENTED"}
+    def ldf_signal_representation(self,s):
+        return
+        # return {"ldf_signal_representation" : "NOT_IMPLEMENTED"}
+    def ldf_signal_representation_node(self,s):
+        return
+        # return {"ldf_signal_representation_node" : "NOT_IMPLEMENTED"}
+    def ldf_signal_encoding_types(self,s):
+        return
+        # return {"ldf_signal_encoding_types" : "NOT_IMPLEMENTED"}
+    def ldf_diagnostic(self,s):
+        return
+        # return {"ldf_diagnostic" : "NOT_IMPLEMENTED"}
+    def ldf_diagnostic_frames(self,s):
+        return
+        # return {"ldf_diagnostic_frames" : "NOT_IMPLEMENTED"}
+    def ldf_header(self,s):
+        return
+        # return {"ldf_header" : "NOT_IMPLEMENTED"}
+
+
+def parseLDF(file):
+    json_parser = Lark(open("ldf.lark"),parser="lalr")
+
+    f=open(file, "r").read()
+    tree = json_parser.parse(f)
+    # print(tree.pretty())
+    
+    json_data = TreeToJson().transform(tree)
+    ldf = {}
+    for a in json_data:
+        if (a != None):
+            ldf.update(a)
+
+    out_ldf = LDF(ldf['nodes'],ldf['frames'],ldf['signals']) 
     
 
-json_parser = Lark(open("ldf.lark"),parser="lalr")
-
-# f=open("/mnt/d/example.ldf", "r").read()
-
-f=open("D:\\example.ldf", "r").read()
-tree = json_parser.parse(f)
-print(tree.pretty())
-
-json_data = TreeToJson().transform(tree)
-
-LdfTransformer().transform(tree)
-
+    return out_ldf
