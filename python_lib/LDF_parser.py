@@ -1,5 +1,6 @@
 from lark import Lark
 from lark import Transformer
+from LINFrame import *
 
 def ParseIntOrHex(x):
     try:
@@ -7,12 +8,27 @@ def ParseIntOrHex(x):
     except ValueError:
         return (int(x,16)) 
 
+
+
 class LDF:
     def __init__(self,nodes, frames, signals):
         self.nodes = nodes
-        self.frames = frames
-        self.signals = signals
-
+        lin_frames  = []
+        for f in frames:
+            for fs in f['frame_signals']:
+                for s in signals:
+                    if (fs['name'] == s['signal_name']):
+                        fs.update(s)
+                        del fs['signal_name']
+            lin_frames.append(LINFrame(f['frame_id'], f['frame_len'], f['frame_name'], f['frame_signals'], f['publisher'] ) )                        
+        self.frames = lin_frames
+        
+        
+    def get_message_by_name(self, name):
+        for f in self.frames:
+            if (f.name == name):
+                return f
+        return
 
 class TreeToJson(Transformer):
     def ldf_node_name(self,s):

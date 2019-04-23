@@ -24,7 +24,7 @@ start: ldf_container
 ?ldf_signal_representation: "Signal_representation" "{" [ldf_signal_representation_node*] "}" 
 ?ldf_signal_representation_node: [(ANY_COLON_TERMINATED_LINE | ANY_SEMICOLON_TERMINATED_LINE)*]
 
-?ldf_node_master: "Master:"/.*;/  
+?ldf_node_master: "Master:" ldf_node_name "," /.*;/  
 ?ldf_node_slaves: "Slaves:" ldf_node_name? ";" 
 
 ldf_node : ldf_signal_name  ":" ldf_node_name ";" 

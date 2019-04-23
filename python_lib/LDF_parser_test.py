@@ -12,7 +12,10 @@ class LDFParserTests(unittest.TestCase):
         
         def test_ldf_with_spaces(self):
             ldf = parseLDF("D:\\ldfe.ldf")        
+            message = ldf.get_message_by_name('LIN_ETAT_VCI_1')
+            message.encode()
             self.assertEqual(ldf.frames[0]['frame_id'], 52)
+            
 def main():
     unittest.main()
 
