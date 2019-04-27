@@ -29,6 +29,12 @@ class LDF:
             if (f.name == name):
                 return f
         return
+    def get_message_by_id(self, fid):
+        for f in self.frames:
+            if (f.id == fid):
+                return f
+        return
+
 
 class TreeToJson(Transformer):
     def ldf_node_name(self,s):

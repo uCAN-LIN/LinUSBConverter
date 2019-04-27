@@ -1,5 +1,7 @@
 import LUC
 import threading, time, sys, os
+from LDF_parser import parseLDF
+import binascii
 
 rx_count = 0
 
@@ -8,7 +10,15 @@ def rx_any(f):
         rx_count += 1 
 
 def rx_new_data(f):
-        print (str(rx_count) + " " + hex(f.id) + ": " + hex(f.data))
+        global message
+        print (str(rx_count) + " " + hex(f.id) + ": " +(f.data.hex()))
+        if (message.id == f.id):
+                message.decode(f.data)
+                print(message.diff_str())
+
+ldf = parseLDF("D:\\ldfe.ldf")        
+message = ldf.get_message_by_name('LIN_ETAT_VCI_1')
+
 
 lin = LUC.LUC('COM7')
 

@@ -5,7 +5,7 @@ import threading
 
 class LINFrame:
     id = 0
-    data = b'0'
+    data = bytearray()
 
 
 class LUC:
@@ -145,7 +145,7 @@ class LUC:
 
                     lf = LINFrame()                
                     lf.id = int(frame_string[2:4],16)
-                    lf.data = int(frame_string[5:-1],16)
+                    lf.data = bytes.fromhex(frame_string[5:])       
                     return lf
             
             time.sleep(0.001)
