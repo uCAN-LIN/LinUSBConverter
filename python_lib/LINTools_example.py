@@ -1,36 +1,31 @@
 import LUC
 import threading, time, sys, os
 
-lin = LUC.LUC('COM7')
-lin.close()
-lin.openAsMaster() 
-lin.disable()
+rx_count = 0
 
-def statusFrameThread():
-    global lin
-    f52 = 0
-    f54 = 0
-    while True:
-        f = lin.waitForFrame(0)
-        
-        if (f.id == 54):
-                if (f54 != f.data):
-                        f54 = f.data
-                        print ("54 : " + hex(f54))
-        if (f.id == 52):
-                if (f52 != f.data):
-                        f52 = f.data
-                        print ("52 : " + hex(f52))
-        
-w_tx = threading.Thread(target=statusFrameThread) 
-w_tx.start()
+def rx_any(f):
+        global rx_count
+        rx_count += 1 
+
+def rx_new_data(f):
+        print (str(rx_count) + " " + hex(f.id) + ": " + hex(f.data))
+
+lin = LUC.LUC('COM7')
+
+lin.set_frame_rx_handler(rx_any)
+lin.set_new_frame_rx_handler(rx_new_data)
+
+lin.openAsMaster() 
 
 lin.addReceptionFrameToTable(52,8)
 lin.addReceptionFrameToTable(54,8)
 lin.enable()
 
+input("Press Enter to continue... \r")
 
-input("Press Enter to continue...")
 lin.disable()
+lin.close()
+lin.deInitSerial()     
+
 os._exit(1)    
         

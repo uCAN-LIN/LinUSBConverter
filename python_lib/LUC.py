@@ -10,11 +10,33 @@ class LINFrame:
 
 class LUC:
 
+    def __def_frame_rx_handler(self,f):
+        pass
+
+    def __def_new_frame_rx_handler(self,f):
+        pass
+
     def __init__(self, com):
-        self.ser = serial.Serial(com,timeout=1) 
-        self.__rx_thread_handler = threading.Thread(target=self.__rxThread, args=())                     
+        self.lastframes = {}
+        self.currentframes = {}
+        self.ser = serial.Serial(com,timeout=0.02)
+        if (self.ser == None):
+            raise NameError('SerialPortNotPresent') 
+        self.ser.reset_output_buffer()
+        self.ser.reset_input_buffer()
+        
+        self.__rx_byte_thread_handler = threading.Thread(target=self.__rxThread, args=())                     
+        self.__rx_frame_thread_handler = threading.Thread(target=self.__newFrameProcess, args=())
         self.__uart_buffer = ''
         self._stop_event = threading.Event()        
+        self.frame_rx_handler = self.__def_frame_rx_handler
+        self.new_frame_rx_handler = self.__def_new_frame_rx_handler
+
+    def set_frame_rx_handler(self, rx_handler):
+        self.frame_rx_handler = rx_handler
+
+    def set_new_frame_rx_handler(self, rx_handler):
+        self.new_frame_rx_handler = rx_handler
 
     def flushData(self, data):
         self.ser.write(data)
@@ -65,13 +87,16 @@ class LUC:
     def enable(self):
         self.flushData(b'r1ff0\r')
         # r = (self.ser.readline().decode("utf-8") == 'z\r')
-        self.__rx_thread_handler.start()
+        self.__rx_byte_thread_handler.start()
+        self.__rx_frame_thread_handler.start()
         return 1
 
     def disable(self):
-        if (self.__rx_thread_handler.is_alive()):
+        if (self.__rx_byte_thread_handler.is_alive()):
             self._stop_event.set()
-            self.__rx_thread_handler.join()
+            self.__rx_byte_thread_handler.join()
+            self.__rx_frame_thread_handler.join()
+        
         self.flushData(b'r2ff0\r')
         return (self.ser.readline().decode("utf-8") == 'z\r')
 
@@ -79,7 +104,7 @@ class LUC:
         return ((c == 't') or (c == 'r'))
 
     def __rxThread(self):
-        while (True):
+        while True:
             if (self._stop_event.is_set()):
                 break
                 
@@ -88,12 +113,22 @@ class LUC:
                 self.__uart_buffer += (cc)                                   
             time.sleep(0.001)
     
-    def waitForFrame(self, wait_time_ms):
-        sleep_time = 0.001
-        count = 0
-        min_frame_size = 5
+    def __newFrameProcess(self):
+        while True:
+            if (self._stop_event.is_set()):
+                break
+            f = self.__waitForFrame()
+            if (f != None):
+                self.frame_rx_handler(f)
+                if(self.currentframes.get(f.id) == None) or (self.currentframes[f.id] != f.data):                
+                    self.currentframes[f.id] = f.data
+                    self.new_frame_rx_handler(f)
 
-        while(1):
+    def __waitForFrame(self):
+        while True:
+            if (self._stop_event.is_set()):
+                return None
+
             if (len(self.__uart_buffer) > 1000):
                 self.__uart_buffer = ''
 
@@ -101,7 +136,7 @@ class LUC:
             end =  self.__uart_buffer.find('\r')
 
             if (start != -1 and end != -1):
-                if (start > (end - min_frame_size)):
+                if (start > (end - 5)):
                     self.__uart_buffer = self.__uart_buffer[end:]
                 else: 
                     frame_string = self.__uart_buffer[start:end]
@@ -112,14 +147,16 @@ class LUC:
                     lf.id = int(frame_string[2:4],16)
                     lf.data = int(frame_string[5:-1],16)
                     return lf
-        
-        time.sleep(sleep_time)
-        if wait_time_ms != 0:
-            count += 1
-            if (count > wait_time_ms/sleep_time/1000):
-                return 0 
+            
+            time.sleep(0.001)
 
-    def __del__(self):
-        self.close()
+    def deInitSerial(self):
         self.ser.flush() 
         self.ser.close()
+        del self.ser
+
+    def __del__(self):
+        self.disable()
+        self.close()
+        self.deInitSerial()
+        
