@@ -1,10 +1,13 @@
+# python setup.py sdist
+# python -m twine upload dist/*
+ 
 import setuptools
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 setuptools.setup(
      name='ucanlintools',  
-     version='0.0.2',
+     version='0.0.6',
      author="ucan",
      author_email="ucandevices@mail.com",
      description="Local Interconnect Network (LIN) support for python",
@@ -15,7 +18,7 @@ setuptools.setup(
      package_data = { '': ['*.lark'] },
      license = 'MIT',
      keywords = ['LIN', 'LDF', 'LUC', 'uCAN', 'parser'],
-     install_requires = ['serial', 'math', 'time', 'threading', 'lark', 'bitstruct'],
+     install_requires = ['pyserial','lark', 'bitstruct'],
 
      py_modules=['LUC','LDF_parser', 'LINFrame'],
      classifiers=[

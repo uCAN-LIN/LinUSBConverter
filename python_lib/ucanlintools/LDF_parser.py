@@ -10,6 +10,16 @@ def ParseIntOrHex(x):
 
 
 class LDF:
+    """LDF parsing class.    
+    
+    Parameters
+        ----------
+        nodes : lin nodes
+            The name of the animal
+        frames : lin frames with id and signals description
+        
+    """
+
     def __init__(self,nodes, frames, signals):
         self.nodes = nodes
         lin_frames  = []
@@ -22,13 +32,25 @@ class LDF:
             lin_frames.append(LINFrame(f['frame_id'], f['frame_len'], f['frame_name'], f['frame_signals'], f['publisher'] ) )                        
         self.frames = lin_frames
         
-        
+    
     def get_message_by_name(self, name):
+        """Get Message by message name
+        
+        Returns
+        ----------
+        LINFrame object
+        """
         for f in self.frames:
             if (f.name == name):
                 return f
         return
     def get_message_by_id(self, fid):
+        """Get Message by message id
+        
+        Returns
+        ----------
+        LINFrame object
+        """
         for f in self.frames:
             if (f.id == fid):
                 return f
@@ -122,6 +144,12 @@ class TreeToJson(Transformer):
 
 
 def parseLDF(file):
+    """Parse LDF file
+        
+    Returns
+    ----------
+    LDF object
+    """
     # json_parser = Lark(open("..\ucanlintools\ldf.lark"),parser="lalr")
     json_parser = Lark(''' 
     start: ldf_container

@@ -10,7 +10,7 @@ def rx_any(f):
 
 class LUCTesting(unittest.TestCase):
     def setUp(self):
-        self.master = LUC('COM8')
+        self.master = LUC('COM15')
         self.slave = LUC('COM7')
 
         ll = self.master.close()

@@ -30,7 +30,6 @@ class LINFrame:
         for i,s in enumerate(self.signals):                                    
             s['value'][0] = p[i]
         return p
-
     def diff_str(self):
         outStr = "{"
         for i,s in enumerate(self.signals):

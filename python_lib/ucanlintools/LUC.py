@@ -2,8 +2,22 @@ import serial
 import math
 import time
 import threading
+import logging
+
+logger = logging.getLogger()
+
 
 class LINFrame:
+    """LIN Frame class.
+        
+
+    Attributes
+    ----------
+    id: int 
+        frame id
+    data: bytearray
+        frame data as byte array
+    """
     id = 0
     data = bytearray()
 
@@ -33,14 +47,28 @@ class LUC:
         self.new_frame_rx_handler = self.__def_new_frame_rx_handler
 
     def set_frame_rx_handler(self, rx_handler):
+        """Sets handler for frame reception, will be called after any frame reception.
+        
+        Parameters
+        ----------  
+            rx_handler : function handler, with LINFrame argument 
+        """
+
         self.frame_rx_handler = rx_handler
 
     def set_new_frame_rx_handler(self, rx_handler):
+        """Sets handler for frame reception, will be called only when there is diffrent data on frame received.
+
+        Parameters
+        ----------  
+            rx_handler : function handler, with LINFrame argument 
+        
+        """
         self.new_frame_rx_handler = rx_handler
 
     def flushData(self, data):
         self.ser.write(data)
-        print(data)
+        logger.info(data)
     
 
     def reqestFirmwareVersion(self):
@@ -49,30 +77,37 @@ class LUC:
         return line.replace("v","").replace("\r","")
 
     def openAsMaster(self):
+        """Open LIN Converter in Master mode"""
         self.flushData(b'O\r')        
         return (self.ser.readline().decode("utf-8") == '\r')
 
     def lowSpeed(self):
+        """LIN low speed"""
         self.flushData(b'S2\r')        
         return (self.ser.readline().decode("utf-8") == '\r')
     
     def highSpeed(self):
+        """LIN high speed"""
         self.flushData(b'S1\r')        
         return (self.ser.readline().decode("utf-8") == '\r')
 
     def openAsSlave(self):
+        """Open LIN Converter in slave mode"""
         self.flushData(b'L\r')        
         return (self.ser.readline().decode("utf-8") == '\r')
 
     def openAsMonitor(self):
+        """Open LIN Converter in monitor mode"""
         self.flushData(b'l\r')        
         return (self.ser.readline().decode("utf-8") == '\r')
 
     def close(self):
+        """Close LIN connection"""
         self.flushData(b'C\r')        
         return (self.ser.readline().decode("utf-8") == '\r')
 
     def addTransmitFrameToTable(self,id, data):
+        """Add new frame to LIN Converter table"""
         data_str = hex(data).replace("0x","")
         data_len = math.floor(len(data_str)/2)
         line = ('t0' + hex(id).replace("0x","").rjust(2,'0') + str(data_len) + data_str + '\r') 
@@ -80,11 +115,13 @@ class LUC:
         return (self.ser.readline().decode("utf-8") == 'z\r')
 
     def addReceptionFrameToTable(self,id, len):
+        """Add new header to LIN Converter table"""
         line = ('r0' + hex(id).replace("0x","").rjust(2,'0') + str(len) + '\r') 
         self.flushData(line.encode())
         return (self.ser.readline().decode("utf-8") == 'z\r')
 
     def enable(self):
+        """Enable frame sending"""
         self.flushData(b'r1ff0\r')
         # r = (self.ser.readline().decode("utf-8") == 'z\r')
         self.__rx_byte_thread_handler.start()
@@ -92,6 +129,7 @@ class LUC:
         return 1
 
     def disable(self):
+        """Stop reception"""
         if (self.__rx_byte_thread_handler.is_alive()):
             self._stop_event.set()
             self.__rx_byte_thread_handler.join()
