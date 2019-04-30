@@ -1,6 +1,6 @@
-import LUC
+import ucanlintools.LUC
 import threading, time, sys, os
-from LDF_parser import parseLDF
+from ucanlintools.LDF_parser import parseLDF
 import binascii
 
 rx_count = 0
@@ -17,10 +17,10 @@ def rx_new_data(f):
                 print(message.diff_str())
 
 ldf = parseLDF("D:\\ldfe.ldf")        
-message = ldf.get_message_by_name('LIN_ETAT_VCI_1')
+message = ldf.get_message_by_name('FRAME_A')
 
 
-lin = LUC.LUC('COM7')
+lin = ucanlintools.LUC('COM7')
 
 lin.set_frame_rx_handler(rx_any)
 lin.set_new_frame_rx_handler(rx_new_data)

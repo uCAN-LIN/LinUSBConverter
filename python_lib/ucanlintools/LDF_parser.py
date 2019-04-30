@@ -1,6 +1,5 @@
-from lark import Lark
-from lark import Transformer
-from LINFrame import *
+from lark import Lark, Transformer
+from ucanlintools.LINFrame import *
 
 def ParseIntOrHex(x):
     try:
@@ -123,7 +122,85 @@ class TreeToJson(Transformer):
 
 
 def parseLDF(file):
-    json_parser = Lark(open("ldf.lark"),parser="lalr")
+    # json_parser = Lark(open("..\ucanlintools\ldf.lark"),parser="lalr")
+    json_parser = Lark(''' 
+    start: ldf_container
+
+?ldf_container: ldf_header [(ldf_nodes | ldf_signals | ldf_frames | ldf_diagnostic | ldf_diagnostic_frames | ldf_node_atributes | ldf_schedule_table | ldf_signal_encoding_types | ldf_signal_representation)*]
+
+?ldf_nodes : "Nodes" "{" [ldf_node_master] [ldf_node_slaves] "}" 
+?ldf_signals : "Signals" "{" [ldf_signal (ldf_signal)*] "}"  
+?ldf_frames : "Frames" "{" [ldf_frame (ldf_frame)*] "}" 
+
+?ldf_diagnostic : "Diagnostic_signals" "{" [(ANY_SEMICOLON_TERMINATED_LINE)*] "}"
+?ldf_diagnostic_frames : "Diagnostic_frames" "{" [(ldf_diagnostic_master_req | ldf_diagnostic_slave_resp)*] "}"
+
+?ldf_diagnostic_master_req: "MasterReq:" [C_INT] "{" [(ANY_SEMICOLON_TERMINATED_LINE)*] "}"
+?ldf_diagnostic_slave_resp: "SlaveResp:" [C_INT] "{" [(ANY_SEMICOLON_TERMINATED_LINE)*] "}"
+
+?ldf_node_atributes: "Node_attributes" "{" ldf_node_atributes_node? "}"
+?ldf_node_atributes_node: ANY_OPENED_BLOCK [ANY_SEMICOLON_TERMINATED_LINE*] ANY_OPENED_BLOCK [ANY_SEMICOLON_TERMINATED_LINE*] "}" "}"
+
+?ldf_schedule_table: "Schedule_tables" "{" [ldf_schedule_table_node*] "}" 
+?ldf_schedule_table_node: ANY_OPENED_BLOCK [ANY_SEMICOLON_TERMINATED_LINE*] "}"
+
+?ldf_signal_encoding_types: "Signal_encoding_types" "{" [ldf_signal_encoding_types_node*] "}" 
+?ldf_signal_encoding_types_node: ANY_OPENED_BLOCK [(ANY_SEMICOLON_TERMINATED_LINE*)] ["}"] [ANY_CLOSED_BLOCK]
+
+?ldf_signal_representation: "Signal_representation" "{" [ldf_signal_representation_node*] "}" 
+?ldf_signal_representation_node: [(ANY_COLON_TERMINATED_LINE | ANY_SEMICOLON_TERMINATED_LINE)*]
+
+?ldf_node_master: "Master:" ldf_node_name "," /.*;/  
+?ldf_node_slaves: "Slaves:" ldf_node_name? ";" 
+
+ldf_node : ldf_signal_name  ":" ldf_node_name ";" 
+ldf_signal :  ldf_signal_name ":" ldf_signal_size "," ldf_signal_default_value "," ldf_node_name "," ldf_node_name ";" 
+ldf_frame : ldf_frame_name  ":" ldf_frame_id "," ldf_node_name "," ldf_frame_len ["{" (ldf_frame_signal)* "}"] 
+
+
+ldf_frame_signal: ldf_signal_name "," ldf_signal_bit_offset ";" 
+ldf_frame_name: CNAME 
+ldf_frame_id : C_INT 
+ldf_frame_len : C_INT 
+
+ldf_signal_default_value: C_INITIALIZER_LIST|C_INT 
+ldf_signal_size: C_INT 
+ldf_signal_bit_offset: C_INT 
+ldf_signal_name: CNAME 
+
+ldf_node_name: CNAME 
+
+ANY_OPENED_BLOCK: /.*{/
+ANY_CLOSED_BLOCK: /.*}/
+
+ANY_SEMICOLON_TERMINATED_LINE: /.*;/
+ANY_COLON_TERMINATED_LINE: /.*,/
+
+
+
+C_INITIALIZER_LIST: ("{"|"{ ") C_INT ([","|", "]C_INT)* ("}"|" }")
+C_INT: ("0x"HEXDIGIT+) | ("-"? HEXDIGIT+) 
+
+ldf_header: (ldf_header_lin | ldf_header_channel)*  
+ldf_header_lin : "LIN_"/.*;/
+ldf_header_channel : "Channel_name"/.*;/
+
+%import common._STRING_INNER
+
+%import common.HEXDIGIT 
+%import common.INT
+%import common.WORD
+%import common.CNAME
+%import common.ESCAPED_STRING
+%import common.SIGNED_NUMBER
+%import common.WS
+%import common.WS_INLINE
+%ignore WS
+%ignore WS_INLINE
+    
+    
+    
+    ''',parser="lalr")
 
     f=open(file, "r").read()
     tree = json_parser.parse(f)

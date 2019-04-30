@@ -1,10 +1,17 @@
 import unittest
-import LUC
+import time
+from ucanlintools.LUC import LUC
+
+ff = 0
+
+def rx_any(f):
+    global ff
+    ff = f
 
 class LUCTesting(unittest.TestCase):
     def setUp(self):
-        self.master = LUC.LUC('COM8')
-        self.slave = LUC.LUC('COM7')
+        self.master = LUC('COM8')
+        self.slave = LUC('COM7')
 
         ll = self.master.close()
         ll = self.slave.close()
@@ -20,6 +27,7 @@ class LUCTesting(unittest.TestCase):
         self.assertEqual(ll, '0103')
 
     def test_comunication(self):
+        global ff
 
         ll = self.master.lowSpeed()
         ll = self.slave.lowSpeed()
@@ -40,9 +48,11 @@ class LUCTesting(unittest.TestCase):
         ll = self.master.enable()        
         self.assertEqual(ll, 1)
 
-        ll = self.slave.waitForFrame(2000)
-        self.assertEqual(ll.id, 1)
-        self.assertEqual(ll.data, 0x2233)
+        self.slave.set_frame_rx_handler(rx_any)
+        
+        time.sleep(500)
+        self.assertEqual(ff.id, 1)
+        self.assertEqual(ff.data, 0x2233)
 
 def main():
     unittest.main()
