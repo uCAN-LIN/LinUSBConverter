@@ -1,0 +1,50 @@
+LIN_description_file;
+LIN_protocol_version = "2.1" ;
+LIN_language_version = "2.1" ;
+LIN_speed = 19.2 kbps ;
+
+Nodes {
+  Master: Master, 5 ms, 0.1 ms ;
+  Slaves: Slave ;
+}
+
+Signals{
+	backlight_level: 4, 0, MasterECU, Slave ;
+	button_1: 4, 0, Slave, MasterECU ;
+	button_2: 4, 0, Slave, MasterECU ;
+	backlight_status: 4, 0, Slave, MasterECU ;
+}
+
+Frames{
+	Backlight: 11, MasterECU, 1{
+		backlight_level, 0;
+	}
+	Buttons_Status: 12, Slave, 2{
+		button_1, 0;
+		button_2, 4;		
+		backlight_status, 8;
+	}
+}
+
+
+
+
+Node_attributes {
+	Slave{
+		LIN_protocol = "2.1" ;
+		configured_NAD = 0x1 ;
+		initial_NAD = 0x1 ;
+		product_id = 0x0, 0x0, 0x28 ;
+		P2_min = 50 ms ;
+		ST_min = 0 ms ;
+		N_As_timeout = 1000 ms ;
+		N_Cr_timeout = 1000 ms ;
+		configurable_frames{
+			Backlight ;
+			Buttons_Status ;
+		}
+	}
+}
+
+Schedule_tables {
+}

@@ -3,14 +3,18 @@ import time
 from ucanlintools.LUC import LUC
 
 ff = 0
+count = 0
 
 def rx_any(f):
     global ff
+    global count
+    
+    count = count + 1
     ff = f
 
 class LUCTesting(unittest.TestCase):
     def setUp(self):
-        self.master = LUC('COM15')
+        self.master = LUC('COM11')
         self.slave = LUC('COM7')
 
         ll = self.master.close()
@@ -28,6 +32,7 @@ class LUCTesting(unittest.TestCase):
 
     def test_comunication(self):
         global ff
+        global count
 
         ll = self.master.lowSpeed()
         ll = self.slave.lowSpeed()
@@ -50,9 +55,15 @@ class LUCTesting(unittest.TestCase):
 
         self.slave.set_frame_rx_handler(rx_any)
         
-        time.sleep(500)
+        time.sleep(1)
+        
+        self.slave.disable()
+        self.master.disable()
+
+        print(count)
+        self.assertGreater(count, 40)
         self.assertEqual(ff.id, 1)
-        self.assertEqual(ff.data, 0x2233)
+        self.assertEqual(int.from_bytes(ff.data,byteorder='big'), 0x2233)
 
 def main():
     unittest.main()

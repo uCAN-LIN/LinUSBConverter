@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 setuptools.setup(
      name='ucanlintools',  
-     version='0.0.6',
+     version='0.0.9',
      author="ucan",
      author_email="ucandevices@mail.com",
      description="Local Interconnect Network (LIN) support for python",

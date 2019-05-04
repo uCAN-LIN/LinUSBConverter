@@ -108,7 +108,11 @@ class LUC:
 
     def addTransmitFrameToTable(self,id, data):
         """Add new frame to LIN Converter table"""
-        data_str = hex(data).replace("0x","")
+
+        if (type(data)) is int:
+            data_str = hex(data).replace("0x","")
+        else:
+            data_str = data.hex()
         data_len = math.floor(len(data_str)/2)
         line = ('t0' + hex(id).replace("0x","").rjust(2,'0') + str(data_len) + data_str + '\r') 
         self.flushData(line.encode())
@@ -135,6 +139,8 @@ class LUC:
             self.__rx_byte_thread_handler.join()
             self.__rx_frame_thread_handler.join()
         
+        time.sleep(0.010)
+
         self.flushData(b'r2ff0\r')
         return (self.ser.readline().decode("utf-8") == 'z\r')
 
@@ -175,17 +181,23 @@ class LUC:
 
             if (start != -1 and end != -1):
                 if (start > (end - 5)):
-                    self.__uart_buffer = self.__uart_buffer[end:]
+                    self.__uart_buffer = self.__uart_buffer[start:]
                 else: 
                     frame_string = self.__uart_buffer[start:end]
 
                     self.__uart_buffer = ''
-
-                    lf = LINFrame()                
-                    lf.id = int(frame_string[2:4],16)
-                    lf.data = bytes.fromhex(frame_string[5:])       
-                    return lf
-            
+                    lf = LINFrame()              
+                    try :  
+                        lf.id = int(frame_string[2:4],16)
+                        lf.data = bytes.fromhex(frame_string[5:])
+                        return lf
+                    except ValueError:
+                        pass 
+                        #@TODO FIXME this should not occur but sometimes does ...
+                        # print ("!!id " + frame_string[2:4])
+                        # print ("!!data " + frame_string[5:])
+                        # print ("!!wf " + frame_string)       
+                        
             time.sleep(0.001)
 
     def deInitSerial(self):
@@ -195,6 +207,5 @@ class LUC:
 
     def __del__(self):
         self.disable()
-        self.close()
         self.deInitSerial()
         
