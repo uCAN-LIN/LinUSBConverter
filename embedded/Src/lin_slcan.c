@@ -234,7 +234,7 @@ void lin_slcan_rx(l_u8 rx_byte)
 				{
 					open_lin_data_layer_frame.lenght = slcan_lin_slave_state_data_count;
 					/* checksum calculation */
-					if (rx_byte == open_lin_data_layer_checksum(open_lin_data_layer_frame.pid,
+					if (rx_byte == open_lin_data_layer_checksum(open_lin_data_layer_frame.pid & OPEN_LIN_ID_MASK,
 							open_lin_data_layer_frame.lenght, open_lin_data_layer_frame.data_ptr)) /* TODO remove from interrupt possible function */
 					{
 						/* valid checksum */
