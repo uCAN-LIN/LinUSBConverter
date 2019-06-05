@@ -155,14 +155,14 @@ void lin_slcan_rx_timeout_handler()
 			lin_slcan_rx_handler(&open_lin_data_layer_frame);
 		} else
 		{
-		open_lin_data_layer_frame.lenght = slcan_lin_slave_state_data_count - 1;
-		/* checksum calculation */
-		if (slcan_lin_data_array[open_lin_data_layer_frame.lenght] == open_lin_data_layer_checksum(open_lin_data_layer_frame.pid,
-				open_lin_data_layer_frame.lenght, open_lin_data_layer_frame.data_ptr)) /* TODO remove from interrupt possible function */
-		{
-			/* valid checksum */
-			lin_slcan_rx_handler(&open_lin_data_layer_frame);
-		}
+			open_lin_data_layer_frame.lenght = slcan_lin_slave_state_data_count - 1;
+			/* checksum calculation */
+			if (slcan_lin_data_array[open_lin_data_layer_frame.lenght] == open_lin_data_layer_checksum(open_lin_data_layer_frame.pid & OPEN_LIN_ID_MASK,
+					open_lin_data_layer_frame.lenght, open_lin_data_layer_frame.data_ptr)) /* TODO remove from interrupt possible function */
+			{
+				/* valid checksum */
+				lin_slcan_rx_handler(&open_lin_data_layer_frame);
+			}
 		}
 	}
 	lin_slcan_reset();
@@ -230,7 +230,7 @@ void lin_slcan_rx(l_u8 rx_byte)
 				{
 					open_lin_data_layer_frame.data_ptr[slcan_lin_slave_state_data_count] = rx_byte;
 					slcan_lin_slave_state_data_count ++;
-				} else
+				} else /* 9th byte is LRC */
 				{
 					open_lin_data_layer_frame.lenght = slcan_lin_slave_state_data_count;
 					/* checksum calculation */
