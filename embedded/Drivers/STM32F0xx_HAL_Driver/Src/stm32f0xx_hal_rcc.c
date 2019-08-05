@@ -1088,20 +1088,20 @@ uint32_t HAL_RCC_GetSysClockFreq(void)
       if ((tmpreg & RCC_CFGR_PLLSRC) == RCC_PLLSOURCE_HSE)
       {
         /* HSE used as PLL clock source : PLLCLK = HSE/PREDIV * PLLMUL */
-        pllclk = (HSE_VALUE / prediv) * pllmul;
+//        pllclk = (HSE_VALUE / prediv) * pllmul;
       }
 #if defined(RCC_CFGR_PLLSRC_HSI48_PREDIV)
       else if ((tmpreg & RCC_CFGR_PLLSRC) == RCC_PLLSOURCE_HSI48)
       {
         /* HSI48 used as PLL clock source : PLLCLK = HSI48/PREDIV * PLLMUL */
-        pllclk = (HSI48_VALUE / prediv) * pllmul;
+//        pllclk = (HSI48_VALUE / prediv) * pllmul;
       }
 #endif /* RCC_CFGR_PLLSRC_HSI48_PREDIV */
       else
       {
 #if  (defined(STM32F042x6) || defined(STM32F048xx) || defined(STM32F070x6) || defined(STM32F071xB) || defined(STM32F072xB) || defined(STM32F078xx) || defined(STM32F070xB) || defined(STM32F091xC) || defined(STM32F098xx) || defined(STM32F030xC))
         /* HSI used as PLL clock source : PLLCLK = HSI/PREDIV * PLLMUL */
-        pllclk = (HSI_VALUE / prediv) * pllmul;
+//        pllclk = (HSI_VALUE / prediv) * pllmul;
 #else
         /* HSI used as PLL clock source : PLLCLK = HSI/2 * PLLMUL */
         pllclk = (uint32_t)((HSI_VALUE >> 1U) * pllmul);

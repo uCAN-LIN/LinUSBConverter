@@ -416,7 +416,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
       /* Check if HSE is ready  and if RTC clock selection is HSI_DIV32*/
       else if ((srcclk == RCC_RTCCLKSOURCE_HSE_DIV32) && (HAL_IS_BIT_SET(RCC->CR, RCC_CR_HSERDY)))
       {
-        frequency = HSE_VALUE / 32U;
+//        frequency = HSE_VALUE / 32U;
       }
       break;
     }
@@ -546,14 +546,14 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
         else if (pllsource == RCC_CFGR_PLLSRC_HSI48_PREDIV)
         {
           /* HSI48 used as PLL clock source : frequency = HSI48/PREDIV * PLLMUL */
-          frequency = (HSI48_VALUE / predivfactor) * pllmull;
+//          frequency = (HSI48_VALUE / predivfactor) * pllmull;
         }
 #endif /* RCC_CR2_HSI48ON */
         else
         {
 #if defined(STM32F042x6) || defined(STM32F048xx) || defined(STM32F078xx) || defined(STM32F072xB) || defined(STM32F070xB)
           /* HSI used as PLL clock source : frequency = HSI/PREDIV * PLLMUL */
-          frequency = (HSI_VALUE / predivfactor) * pllmull;
+//          frequency = (HSI_VALUE / predivfactor) * pllmull;
 #else
           /* HSI used as PLL clock source : frequency = HSI/2U * PLLMUL */
           frequency = (HSI_VALUE >> 1U) * pllmull;

@@ -25,7 +25,7 @@
   *    derived from this software without specific written permission.
   * 4. This software, including modifications and/or derivative works of this 
   *    software, must execute solely and exclusively on microcontroller or
-  *    microprocessor devices manufactured by or for STMicroelectronics.
+-  *    microprocessor devices manufactured by or for STMicroelectronics.
   * 5. Redistribution and use of this software other than as permitted under 
   *    this license is void and will automatically terminate your rights under 
   *    this license. 
