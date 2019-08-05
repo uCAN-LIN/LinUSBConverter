@@ -10,8 +10,8 @@
 #include "open_lin_hw.h"
 #include "open_lin_slave_data_layer.h"
 
-#define VERSION_FIRMWARE_MAJOR 1
-#define VERSION_FIRMWARE_MINOR 5
+#define VERSION_FIRMWARE_MAJOR 2
+#define VERSION_FIRMWARE_MINOR 0
 
 #define VERSION_HARDWARE_MAJOR 0
 #define VERSION_HARDWARE_MINOR 1

@@ -217,14 +217,27 @@ void slCanCheckCommand()
         	}
         	MX_USART1_UART_Init();
         	open_lin_hw_reset();
+        	result = terminator;
+        	break;
 
+        case 'B':
+        case 'b':
+        	{
+				uint32_t temp;
+				parseHex(&line[1], 4, &temp);
+				lin_baund_rate = temp;
+				MX_USART1_UART_Init();
+				open_lin_hw_reset();
+				result = terminator;
+	        	break;
+        	}
         case 'F': // Read status flags
       		result = terminator;
             break;
         case 'V': // Get hardware version
             {
                 slcanSetOutputChar('V');
-                slcanSetOutputAsHex(VERSION_HARDWARE_MAJOR);
+//                slcanSetOutputAsHex(VERSION_HARDWARE_MAJOR);
                 slcanSetOutputAsHex(VERSION_HARDWARE_MINOR);
                 result = terminator;
             }
