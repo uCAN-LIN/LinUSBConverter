@@ -93,6 +93,48 @@ uint32_t lin_baund_rate = 19200;
 
 void bootloaderSwitcher();
 
+uint8_t sendbuff[LINE_MAXLEN];
+uint8_t sendbytes_len = 0;
+
+void emulated_uart_init()
+{
+   HAL_GPIO_WritePin(EUART_TX_PORT,EUART_TX_PIN,1);
+}
+#define DELAY_EMUL ;
+#define DELAY_START_BIT ;
+#define DELAY_STOP_BIT ;
+void emulated_uart_send_byte(uint8_t b)
+{
+	  HAL_GPIO_WritePin(EUART_TX_PORT,EUART_TX_PIN,0);
+	  DELAY_START_BIT;
+	  HAL_GPIO_WritePin(EUART_TX_PORT,EUART_TX_PIN,b & 0x01);
+	  DELAY_EMUL;
+	  HAL_GPIO_WritePin(EUART_TX_PORT,EUART_TX_PIN,b & 0x02);
+	  DELAY_EMUL;
+	  HAL_GPIO_WritePin(EUART_TX_PORT,EUART_TX_PIN,b & 0x04);
+	  DELAY_EMUL;
+	  HAL_GPIO_WritePin(EUART_TX_PORT,EUART_TX_PIN,b & 0x08);
+	  DELAY_EMUL;
+	  HAL_GPIO_WritePin(EUART_TX_PORT,EUART_TX_PIN,b & 0x10);
+	  DELAY_EMUL;
+	  HAL_GPIO_WritePin(EUART_TX_PORT,EUART_TX_PIN,b & 0x20);
+	  DELAY_EMUL;
+	  HAL_GPIO_WritePin(EUART_TX_PORT,EUART_TX_PIN,b & 0x40);
+	  DELAY_EMUL;
+	  HAL_GPIO_WritePin(EUART_TX_PORT,EUART_TX_PIN,b & 0x80);
+	  DELAY_EMUL;
+
+	  HAL_GPIO_WritePin(EUART_TX_PORT,EUART_TX_PIN,1);
+	  DELAY_STOP_BIT;
+}
+
+void emulated_uart_send_buffer(uint8_t* buff, uint8_t len)
+{
+	for (uint8_t i = 0; i < len; i++)
+	{
+		emulated_uart_send_byte(buff);
+	}
+}
 
 int main(void)
 {
@@ -134,7 +176,11 @@ int main(void)
   {
 	  slCanCheckCommand();
   /* USER CODE END WHILE */
-
+	  if (sendbytes > 0)
+	  {
+		  emulated_uart_send_buffer(sendbuff,sendbytes_len);
+		  sendbytes_len = 0;
+	  }
   /* USER CODE BEGIN 3 */
 
   }

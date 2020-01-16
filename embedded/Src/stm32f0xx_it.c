@@ -109,8 +109,10 @@ void PendSV_Handler(void)
 /**
 * @brief This function handles System tick timer.
 */
+uint32_t tick_time = 0;
 void SysTick_Handler(void)
 {
+  tick_time ++;
   /* USER CODE BEGIN SysTick_IRQn 0 */
   extern uint32_t slcan_lin_timeout_counter ;
   /* USER CODE END SysTick_IRQn 0 */

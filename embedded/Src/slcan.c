@@ -67,9 +67,12 @@ static void slcanSetOutputAsHex(uint8_t ch) {
 
 static void slcanOutputFlush(void)
 {
-	while (((USBD_CDC_HandleTypeDef*)hUsbDeviceFS.pClassData)->TxState){;} //should change by hardware
-	while (CDC_Transmit_FS(sl_frame, sl_frame_len) != USBD_OK);
-    sl_frame_len = 0;
+	extern uint8_t sendbuff[LINE_MAXLEN];
+	extern uint8_t sendbytes_len = 0;
+
+	memcpy(&sendbuff,sl_frame,sl_frame_len);
+	sendbytes_len = sl_frame_len;
+
 }
 
 void slCanHandler(uint8_t time_passed_ms)
