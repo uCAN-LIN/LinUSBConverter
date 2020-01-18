@@ -68,7 +68,7 @@ static void slcanSetOutputAsHex(uint8_t ch) {
 static void slcanOutputFlush(void)
 {
 	extern uint8_t sendbuff[LINE_MAXLEN];
-	extern uint8_t sendbytes_len = 0;
+	extern uint8_t sendbytes_len;
 
 	memcpy(&sendbuff,sl_frame,sl_frame_len);
 	sendbytes_len = sl_frame_len;
