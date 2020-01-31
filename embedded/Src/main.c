@@ -96,8 +96,6 @@ uint32_t lin_baund_rate = 19200;
 
 void bootloaderSwitcher();
 
-uint8_t sendbuff[LINE_MAXLEN];
-uint8_t sendbytes_len = 0;
 
 //#define EUART_TX_PORT GPIOA
 //#define EUART_TX_PIN GPIO_PIN_8
@@ -142,6 +140,7 @@ uint8_t sendbytes_len = 0;
 //	}
 //}
 
+//uint8_t test[] = {"lolo\r\n"};
 int main(void)
 {
 	serialNumber = uid[0] ^ uid[1] ^ uid[2];
@@ -170,7 +169,7 @@ int main(void)
   MX_GPIO_Init();
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
-//  MX_USB_DEVICE_Init();
+  MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
   HAL_UART_Receive_IT(&huart1, &Uart2RxFifo, UART_RX_FIFO_SIZE);
 //  HAL_NVIC_SetPriority(USART1_IRQn, 2, 0);
@@ -179,18 +178,27 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
+  lin_type = LIN_MONITOR;
+  slcan_state = SLCAN_STATE_OPEN;
+  open_lin_hw_reset();
+  lin_slcan_reset();
+
   while (1)
   {
+
 	  slCanCheckCommand();
   /* USER CODE END WHILE */
-	  if (sendbytes_len > 0)
+//	  if (sendbytes_len > 0)
 	  {
 //		  emulated_uart_send_buffer(sendbuff,sendbytes_len);
-		  HAL_UART_Transmit(&huart2,sendbuff,sendbytes_len,1000);
-		  sendbytes_len = 0;
+
+//		  HAL_UART_Transmit(&huart2,test,sizeof(test),1000);
+//		  HAL_UART_Transmit(&huart2,sendbuff,sendbytes_len,1000);
+//		  HAL_UART_Transmit(&huart2,sl_frame,sendbytes_len,1000);
+//		  sendbytes_len = 0;
 	  }
   /* USER CODE BEGIN 3 */
-
   }
   /* USER CODE END 3 */
 
@@ -316,6 +324,18 @@ static void MX_GPIO_Init(void)
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
+
+//  GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+    /* GPIO Ports Clock Enable */
+//    __HAL_RCC_GPIOA_CLK_ENABLE();
+
+    /*Configure GPIO pin : PA13 */
+//    GPIO_InitStruct.Pin = GPIO_PIN_13;
+//    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+//    GPIO_InitStruct.Pull = GPIO_PULLUP;
+//    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
 
 }
 

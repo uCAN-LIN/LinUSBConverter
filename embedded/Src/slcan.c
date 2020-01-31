@@ -6,6 +6,7 @@
  */
 
 #include "slcan.h"
+#include <stdlib.h>
 
 #include <stdbool.h>
 #include <string.h>
@@ -27,9 +28,10 @@ LinType_t lin_type = LIN_MONITOR;
 static uint8_t terminator = SLCAN_CR;
 
 extern USBD_HandleTypeDef hUsbDeviceFS;
+extern UART_HandleTypeDef huart2;
 
-uint8_t sl_frame[LINE_MAXLEN];
-uint8_t sl_frame_len=0;
+volatile uint8_t sl_frame[LINE_MAXLEN];
+volatile uint8_t sl_frame_len=0;
 /**
   * @brief  Adds data to send buffer
   * @param  c - data to add
@@ -37,7 +39,7 @@ uint8_t sl_frame_len=0;
   */
 static void slcanSetOutputChar(uint8_t c)
 {
-	if (sl_frame_len < sizeof(sl_frame))
+	if (sl_frame_len < LINE_MAXLEN)
 	{
 		sl_frame[sl_frame_len] = c;
 		sl_frame_len ++;
@@ -67,12 +69,8 @@ static void slcanSetOutputAsHex(uint8_t ch) {
 
 static void slcanOutputFlush(void)
 {
-	extern uint8_t sendbuff[LINE_MAXLEN];
-	extern uint8_t sendbytes_len;
-
-	memcpy(&sendbuff,sl_frame,sl_frame_len);
-	sendbytes_len = sl_frame_len;
-
+	HAL_UART_Transmit(&huart2,sl_frame,sl_frame_len,1000);
+	sl_frame_len = 0;
 }
 
 void slCanHandler(uint8_t time_passed_ms)
@@ -194,138 +192,138 @@ void slCanCheckCommand()
 	uint8_t result = SLCAN_BELL;
 	uint8_t *line = command;
 
-    switch (line[0]) {
-    	case 0:
-    		return;
-    	case 'a':
-    	{
-    		if (terminator == SLCAN_CR)
-    			terminator = SLCAN_LR;
-    		else
-    			terminator = SLCAN_CR;
-    		result = terminator;
-    		break;
-    	}
-        case 'S':
-        case 'G':
-        case 'W':
-        case 's':
-        	if (line[1] == '2')
-        	{
-        		lin_baund_rate = 9600;
-        	} else
-        	{
-        		lin_baund_rate = 19200;
-
-        	}
-        	MX_USART1_UART_Init();
-        	open_lin_hw_reset();
-        	result = terminator;
-        	break;
-
-        case 'B':
-        case 'b':
-        	{
-				uint32_t temp;
-				parseHex(&line[1], 4, &temp);
-				lin_baund_rate = temp;
-				MX_USART1_UART_Init();
-				open_lin_hw_reset();
-				result = terminator;
-	        	break;
-        	}
-        case 'F': // Read status flags
-      		result = terminator;
-            break;
-        case 'V': // Get hardware version
-            {
-                slcanSetOutputChar('V');
-//                slcanSetOutputAsHex(VERSION_HARDWARE_MAJOR);
-                slcanSetOutputAsHex(VERSION_HARDWARE_MINOR);
-                result = terminator;
-            }
-            break;
-        case 'v': // Get firmware version
-            {
-                slcanSetOutputChar('v');
-                slcanSetOutputAsHex(VERSION_FIRMWARE_MAJOR);
-                slcanSetOutputAsHex(VERSION_FIRMWARE_MINOR);
-                result = terminator;
-            }
-            break;
-        case 'N': // Get serial number
-            {
-
-                slcanSetOutputChar('N');
-                slcanSetOutputAsHex((uint8_t)(serialNumber));
-                slcanSetOutputAsHex((uint8_t)(serialNumber>>8));
-                slcanSetOutputAsHex((uint8_t)(serialNumber>>16));
-                slcanSetOutputAsHex((uint8_t)(serialNumber>>24));
-                result = terminator;
-            }
-            break;
-        case 'o':  // master mode
-        case 'O':
-            if (slcan_state == SLCAN_STATE_CONFIG)
-            {
-                lin_type = LIN_MASTER;
-                result = terminator;
-            }
-            break;
-        case 'L': // slave mode
-        	 if (slcan_state == SLCAN_STATE_CONFIG){
-        		 result = terminator;
-				 lin_type = LIN_SLAVE;
-				 slcan_state = SLCAN_STATE_OPEN;
-				 open_lin_hw_reset();
-				 lin_slcan_reset();
-        	 }
-        case 'l':  // monitor
-            if (slcan_state == SLCAN_STATE_CONFIG)
-            {
-				result = terminator;
-                lin_type = LIN_MONITOR;
-                slcan_state = SLCAN_STATE_OPEN;
-            	open_lin_hw_reset();
-            	lin_slcan_reset();
-            }
-            break;
-
-        case 'C': // Close LIN channel
-            slcan_state = SLCAN_STATE_CONFIG;
-            result = terminator;
-            lin_type = LIN_MASTER;
-            break;
-
-        case 'R':
-        case 'r': // Transmit header
-        case 'T':
-        case 't': // Transmit full frame
-        	switch (lin_type)
-        	{
-				case LIN_MASTER:
-				case LIN_SLAVE:
-	                if (addLinMasterRow(line) == 1){
-	                	if (line[0] < 'Z') slcanSetOutputChar('Z');
-	                	else slcanSetOutputChar('z');
-	                }
-	                result = terminator;
-					break;
-				case LIN_MONITOR:
-	                if (slcan_state == SLCAN_STATE_OPEN)
-	                {
-	                    if (transmitStd(line) == 1) {
-	                        if (line[0] < 'Z') slcanSetOutputChar('Z');
-	                        else slcanSetOutputChar('z');
-	                        result = terminator;
-	                    }
-	                }
-					break;
-				default:
-					break;
-        	}
-            break;
-    }
+//    switch (line[0]) {
+//    	case 0:
+//    		return;
+//    	case 'a':
+//    	{
+//    		if (terminator == SLCAN_CR)
+//    			terminator = SLCAN_LR;
+//    		else
+//    			terminator = SLCAN_CR;
+//    		result = terminator;
+//    		break;
+//    	}
+//        case 'S':
+//        case 'G':
+//        case 'W':
+//        case 's':
+//        	if (line[1] == '2')
+//        	{
+//        		lin_baund_rate = 9600;
+//        	} else
+//        	{
+//        		lin_baund_rate = 19200;
+//
+//        	}
+//        	MX_USART1_UART_Init();
+//        	open_lin_hw_reset();
+//        	result = terminator;
+//        	break;
+//
+//        case 'B':
+//        case 'b':
+//        	{
+//				uint32_t temp;
+//				parseHex(&line[1], 4, &temp);
+//				lin_baund_rate = temp;
+//				MX_USART1_UART_Init();
+//				open_lin_hw_reset();
+//				result = terminator;
+//	        	break;
+//        	}
+//        case 'F': // Read status flags
+//      		result = terminator;
+//            break;
+//        case 'V': // Get hardware version
+//            {
+//                slcanSetOutputChar('V');
+////                slcanSetOutputAsHex(VERSION_HARDWARE_MAJOR);
+//                slcanSetOutputAsHex(VERSION_HARDWARE_MINOR);
+//                result = terminator;
+//            }
+//            break;
+//        case 'v': // Get firmware version
+//            {
+//                slcanSetOutputChar('v');
+//                slcanSetOutputAsHex(VERSION_FIRMWARE_MAJOR);
+//                slcanSetOutputAsHex(VERSION_FIRMWARE_MINOR);
+//                result = terminator;
+//            }
+//            break;
+//        case 'N': // Get serial number
+//            {
+//
+//                slcanSetOutputChar('N');
+//                slcanSetOutputAsHex((uint8_t)(serialNumber));
+//                slcanSetOutputAsHex((uint8_t)(serialNumber>>8));
+//                slcanSetOutputAsHex((uint8_t)(serialNumber>>16));
+//                slcanSetOutputAsHex((uint8_t)(serialNumber>>24));
+//                result = terminator;
+//            }
+//            break;
+//        case 'o':  // master mode
+//        case 'O':
+//            if (slcan_state == SLCAN_STATE_CONFIG)
+//            {
+//                lin_type = LIN_MASTER;
+//                result = terminator;
+//            }
+//            break;
+//        case 'L': // slave mode
+//        	 if (slcan_state == SLCAN_STATE_CONFIG){
+//        		 result = terminator;
+//				 lin_type = LIN_SLAVE;
+//				 slcan_state = SLCAN_STATE_OPEN;
+//				 open_lin_hw_reset();
+//				 lin_slcan_reset();
+//        	 }
+//        case 'l':  // monitor
+//            if (slcan_state == SLCAN_STATE_CONFIG)
+//            {
+//				result = terminator;
+//                lin_type = LIN_MONITOR;
+//                slcan_state = SLCAN_STATE_OPEN;
+//            	open_lin_hw_reset();
+//            	lin_slcan_reset();
+//            }
+//            break;
+//
+//        case 'C': // Close LIN channel
+//            slcan_state = SLCAN_STATE_CONFIG;
+//            result = terminator;
+//            lin_type = LIN_MASTER;
+//            break;
+//
+//        case 'R':
+//        case 'r': // Transmit header
+//        case 'T':
+//        case 't': // Transmit full frame
+//        	switch (lin_type)
+//        	{
+//				case LIN_MASTER:
+//				case LIN_SLAVE:
+//	                if (addLinMasterRow(line) == 1){
+//	                	if (line[0] < 'Z') slcanSetOutputChar('Z');
+//	                	else slcanSetOutputChar('z');
+//	                }
+//	                result = terminator;
+//					break;
+//				case LIN_MONITOR:
+//	                if (slcan_state == SLCAN_STATE_OPEN)
+//	                {
+//	                    if (transmitStd(line) == 1) {
+//	                        if (line[0] < 'Z') slcanSetOutputChar('Z');
+//	                        else slcanSetOutputChar('z');
+//	                        result = terminator;
+//	                    }
+//	                }
+//					break;
+//				default:
+//					break;
+//        	}
+//            break;
+//    }
 
     if ((line[0] == 'b') && (line[1] == 'o') && (line[2] == 'o') && (line[3] == 't'))
     {
@@ -334,27 +332,62 @@ void slCanCheckCommand()
 
    line[0] = 0;
    slcanSetOutputChar(result);
-   slcanOutputFlush();
+//   slcanOutputFlush();
 }
 
-
+extern uint32_t tick_time;
 /**
  * @brief  reciving CAN frame
  * @param  canmsg Pointer to can message
  * 			step Current step
  * @retval Next character to print out
  */
+char time_string[48] = {0};
 uint8_t slcanReciveCanFrame(open_lin_frame_slot_t *pRxMsg)
 {
 	uint8_t i;
 	open_lin_pid_t pid;
+	const int time_str_padd = 12;
 
-    slcanSetOutputChar('t');
+//    slcanSetOutputChar('t');
 
     pid = pRxMsg->pid & 0x3F;
+    sl_frame_len = 0;
+    slcanSetOutputChar('(');
 
+    utoa (tick_time,time_string,10 );
+    // add padding
+    {
+    	uint8_t w = 0;
+    	uint8_t len = strlen(time_string);
+		i = 0;
+
+		while (time_string[w])
+		{
+			if (len >= (time_str_padd  - i))
+			{
+				slcanSetOutputChar(time_string[w]);
+				w ++;
+			} else
+			{
+				slcanSetOutputChar('0');
+			}
+			i++;
+		}
+    }
+
+//    slcanSetOutputAsHex(tick_time >> 24);
+//    slcanSetOutputAsHex(tick_time >> 16);
+//    slcanSetOutputAsHex(tick_time >> 8);
+//    slcanSetOutputAsHex(tick_time);
+
+
+
+    slcanSetOutputChar(')');
+    slcanSetOutputChar(' ');
     slCanSendNibble(0); // for slcan compatibility
     slcanSetOutputAsHex(pid);
+    slcanSetOutputChar('#');
 	slCanSendNibble(pRxMsg->data_length);
 	if (pRxMsg->data_length > 0)
 	{
@@ -363,7 +396,9 @@ uint8_t slcanReciveCanFrame(open_lin_frame_slot_t *pRxMsg)
 			slcanSetOutputAsHex(pRxMsg->data_ptr[i]);
 		}
 	}
-	slcanSetOutputChar(terminator);
+	slcanSetOutputChar(SLCAN_CR);
+	slcanSetOutputChar(SLCAN_LR);
+
 	slcanOutputFlush();
 	return 0;
 }
