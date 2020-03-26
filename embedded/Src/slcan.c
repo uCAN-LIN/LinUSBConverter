@@ -186,6 +186,8 @@ static uint8_t transmitStd(uint8_t* line) {
 extern void MX_USART1_UART_Init(void);
 extern uint32_t lin_baund_rate;
 
+l_u8 classicChecksum = 0;
+
 void slCanCheckCommand()
 {
 	uint8_t result = SLCAN_BELL;
@@ -219,7 +221,16 @@ void slCanCheckCommand()
         	open_lin_hw_reset();
         	result = terminator;
         	break;
-
+        case 'x':
+        	if (line[1] == '2')
+			{
+        		classicChecksum  = 1;
+			} else
+			{
+				classicChecksum  = 0;
+			}
+        	result = terminator;
+        	break;
         case 'B':
         case 'b':
         	{

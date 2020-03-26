@@ -62,7 +62,7 @@ uint8_t addLinMasterRow(uint8_t* line) {
     	{
     		open_lin_net_init(master_frame_table,master_frame_table_size);
     	} else {
-    		open_lin_master_dl_init(master_frame_table,master_frame_table_size);
+			open_lin_master_dl_init(master_frame_table,master_frame_table_size);
     		 //wakeUpLin();
     	}
         slcan_state = SLCAN_STATE_OPEN;
@@ -74,6 +74,11 @@ uint8_t addLinMasterRow(uint8_t* line) {
 
 	array_ptr = slcan_get_master_table_row(temp, &out_index);
     array_ptr->slot.pid= temp;
+//    if ((temp == 0x3d) || (temp == 0x3c))
+//    {
+    	extern l_u8 diagnostic_slot;
+    	diagnostic_slot = 1;
+//    }
     // len
     if (!parseHex(&line[4 + offset], 1, &temp)) return 0;
     if (array_ptr->slot.data_length  > 8) return 0;
