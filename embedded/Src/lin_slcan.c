@@ -55,7 +55,6 @@ uint8_t addLinMasterRow(uint8_t* line) {
         master_frame_table_size = 0;
         return 1;
     }
-
     // start sending
     if (line[1] == '1'){
     	if (lin_type == LIN_SLAVE)
@@ -74,11 +73,11 @@ uint8_t addLinMasterRow(uint8_t* line) {
 
 	array_ptr = slcan_get_master_table_row(temp, &out_index);
     array_ptr->slot.pid= temp;
-//    if ((temp == 0x3d) || (temp == 0x3c))
-//    {
+    if ((temp == 0x3d) || (temp == 0x3c))
+    {
     	extern l_u8 diagnostic_slot;
     	diagnostic_slot = 1;
-//    }
+    }
     // len
     if (!parseHex(&line[4 + offset], 1, &temp)) return 0;
     if (array_ptr->slot.data_length  > 8) return 0;

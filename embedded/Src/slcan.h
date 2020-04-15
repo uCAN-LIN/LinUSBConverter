@@ -11,7 +11,7 @@
 #include "open_lin_slave_data_layer.h"
 
 #define VERSION_FIRMWARE_MAJOR 3
-#define VERSION_FIRMWARE_MINOR 0
+#define VERSION_FIRMWARE_MINOR 1
 
 #define VERSION_HARDWARE_MAJOR 0
 #define VERSION_HARDWARE_MINOR 1

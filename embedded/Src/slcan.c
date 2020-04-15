@@ -221,27 +221,6 @@ void slCanCheckCommand()
         	open_lin_hw_reset();
         	result = terminator;
         	break;
-        case 'x':
-        	if (line[1] == '2')
-			{
-        		classicChecksum  = 1;
-			} else
-			{
-				classicChecksum  = 0;
-			}
-        	result = terminator;
-        	break;
-        case 'B':
-        case 'b':
-        	{
-				uint32_t temp;
-				parseHex(&line[1], 4, &temp);
-				lin_baund_rate = temp;
-				MX_USART1_UART_Init();
-				open_lin_hw_reset();
-				result = terminator;
-	        	break;
-        	}
         case 'F': // Read status flags
       		result = terminator;
             break;
@@ -288,6 +267,7 @@ void slCanCheckCommand()
 				 open_lin_hw_reset();
 				 lin_slcan_reset();
         	 }
+        	 break;
         case 'l':  // monitor
             if (slcan_state == SLCAN_STATE_CONFIG)
             {
@@ -309,6 +289,32 @@ void slCanCheckCommand()
         case 'r': // Transmit header
         case 'T':
         case 't': // Transmit full frame
+            // shame on you that you put this code here ...
+        	if (line[1] == '3')
+			{
+				if (line[2] == '1')
+					classicChecksum  = 1;
+				else
+					classicChecksum  = 0;
+				 slcanSetOutputChar('Z');
+				result = terminator;
+				break;
+			}
+
+            // baud rate selection
+            if (line[2] == '4')
+            {
+        		uint32_t temp;
+        		parseHex(&line[3], 4, &temp);
+        		lin_baund_rate = temp;
+        		MX_USART1_UART_Init();
+        		open_lin_hw_reset();
+        		 slcanSetOutputChar('Z');
+        		result = terminator;
+        		break;
+            }
+
+
         	switch (lin_type)
         	{
 				case LIN_MASTER:
