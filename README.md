@@ -6,7 +6,7 @@ Drivers for USB layer were generated in stm32CubeMX.
 # Hardware
 Hardware is open source. See PCB directory.
 # Bootloader
-STM32 have embedded DFU bootloader, for more info see st.com
+STM32 have embedded DFU bootloader, for more info see st.com. To enter the bootloader please type boot. See [tutorial](https://www.youtube.com/watch?v=-gnX25AGyI0)
 # Tools
 Device is partially compatible with SLCAN, A set of tools is available at [ucandevices](https://ucandevices.github.io/ulc.html)
 # LIN Implementation
