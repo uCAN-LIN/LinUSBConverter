@@ -51,9 +51,10 @@ static void slcanSetOutputChar(uint8_t c)
   * @param  c - data to add
   * @retval None
   */
+l_u8 classicChecksum = 0;
 static void slCanSendNibble(uint8_t ch)
 {
-	ch = ch > 9 ? ch - 10 + 'A' : ch + '0';
+	ch = ch > 9 ? ch - 10 + 'a' : ch + '0';
 	slcanSetOutputChar(ch);
 }
 
@@ -353,7 +354,7 @@ uint8_t slcanReciveCanFrame(open_lin_frame_slot_t *pRxMsg)
 
     pid = pRxMsg->pid & 0x3F;
     sl_frame_len = 0;
-    slcanSetOutputChar('(');
+//    slcanSetOutputChar('(');
 
     utoa (tick_time,time_string,10 );
     // add padding
@@ -383,11 +384,14 @@ uint8_t slcanReciveCanFrame(open_lin_frame_slot_t *pRxMsg)
 
 
 
-    slcanSetOutputChar(')');
+    slcanSetOutputChar(':');
     slcanSetOutputChar(' ');
+    slcanSetOutputChar('R');
+    slcanSetOutputChar(' ');
+    slcanSetOutputChar('t');
     slCanSendNibble(0); // for slcan compatibility
     slcanSetOutputAsHex(pid);
-    slcanSetOutputChar('#');
+//    slcanSetOutputChar('#');
 	slCanSendNibble(pRxMsg->data_length);
 	if (pRxMsg->data_length > 0)
 	{
