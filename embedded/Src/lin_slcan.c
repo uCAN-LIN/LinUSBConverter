@@ -75,8 +75,8 @@ uint8_t addLinMasterRow(uint8_t* line) {
     array_ptr->slot.pid= temp;
     if ((temp == 0x3d) || (temp == 0x3c))
     {
-    	extern l_u8 diagnostic_slot;
-    	diagnostic_slot = 1;
+//    	extern l_u8 diagnostic_slot;
+//    	diagnostic_slot = 1;
     }
     // len
     if (!parseHex(&line[4 + offset], 1, &temp)) return 0;
