@@ -5,6 +5,7 @@
 #include <sys/_stdint.h>
 #include "open_lin_cfg.h"
 #include "open_lin_slave_data_layer.h"
+#include "open_lin_network_layer.h"
 
 #include "usbd_cdc_if.h"
 #include "stm32f0xx_hal.h"
@@ -37,7 +38,7 @@ t_master_frame_table_item* slcan_get_master_table_row(open_lin_pid_t id, int8_t*
 //T013151502AA55
 //t0163112233
 
-void open_lin_net_init(t_master_frame_table_item *a_slot_array, l_u8 a_slot_array_len);
+void open_lin_net_init(open_lin_frame_slot_t *a_slot_array, l_u8 a_slot_array_len);
 
 uint8_t addLinMasterRow(uint8_t* line) {
     uint32_t temp;
@@ -59,7 +60,7 @@ uint8_t addLinMasterRow(uint8_t* line) {
     if (line[1] == '1'){
     	if (lin_type == LIN_SLAVE)
     	{
-    		open_lin_net_init(master_frame_table,master_frame_table_size);
+    		open_lin_net_init((open_lin_frame_slot_t*)master_frame_table,master_frame_table_size);
     	} else {
 			open_lin_master_dl_init(master_frame_table,master_frame_table_size);
     		 //wakeUpLin();
