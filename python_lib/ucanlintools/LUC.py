@@ -206,6 +206,12 @@ class LUC:
         self.ser.close()
         del self.ser
 
+    def isRunning(self):
+        """Simple function that returns true if rx thread is alive. Useful for implementation of exception and
+        interruption (like KeyboardInterrupt) handling in scripts using LUC object.
+        """
+        return self.__rx_byte_thread_handler.is_alive()
+
     def __del__(self):
         self.disable()
         self.deInitSerial()
