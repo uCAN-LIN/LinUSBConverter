@@ -30,10 +30,10 @@ class LUC:
     def __def_new_frame_rx_handler(self, f):
         pass
 
-    def __init__(self, com):
+    def __init__(self, com, timeout=0.02, baudrate=9600):
         self.lastframes = {}
         self.currentframes = {}
-        self.ser = serial.Serial(com, timeout=0.02)
+        self.ser = serial.Serial(com, timeout=timeout, baudrate=baudrate)
         if self.ser is None:
             raise NameError('SerialPortNotPresent')
         self.ser.reset_output_buffer()
@@ -193,6 +193,8 @@ class LUC:
                     except ValueError:
                         pass
                         # @TODO FIXME this should not occur but sometimes does ...
+                        # JP: found this error when using default serial baudrate 9600. Changing it to 19200 fixed
+                        # the issue for me. Added as optional argument to initialization.
                         # print ("!!id " + frame_string[2:4])
                         # print ("!!data " + frame_string[5:])
                         # print ("!!wf " + frame_string)       
@@ -203,6 +205,12 @@ class LUC:
         self.ser.flush()
         self.ser.close()
         del self.ser
+
+    def isRunning(self):
+        """Simple function that returns true if rx thread is alive. Useful for implementation of exception and
+        interruption (like KeyboardInterrupt) handling in scripts using LUC object.
+        """
+        return self.__rx_byte_thread_handler.is_alive()
 
     def __del__(self):
         self.disable()

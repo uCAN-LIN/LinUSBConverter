@@ -61,6 +61,21 @@ def rx_new_data(f):
                 print(message.diff_str())
 ```
 
+
+Example blocking function that can be called in main script to handle KeyboardInterrupt and SystemExit and add code that should be executed after connection is closed. It blocks the script that calls the function but does not interrupt communication threads.
+
+```python
+import time
+
+def listen(lin):
+    try:
+        while lin.isRunning():
+            time.sleep(1)
+    except (KeyboardInterrupt, SystemExit):
+        lin.disable()
+        lin.deInitSerial()
+```
+
 ## For more info see
 
 https://ucandevices.github.io
