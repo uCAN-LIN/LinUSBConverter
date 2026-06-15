@@ -1,5 +1,4 @@
 import serial
-import math
 import time
 import threading
 import logging
@@ -43,6 +42,14 @@ class LUC:
         self.__rx_frame_thread_handler = threading.Thread(target=self.__newFrameProcess, args=())
         self.__uart_buffer = ''
         self._stop_event = threading.Event()
+        # Guards serial writes; writes may come from the main thread and from
+        # rx handlers (which run in the frame-processing thread).
+        self.__serial_lock = threading.Lock()
+        # True once enable() has started the rx thread. While running, the rx
+        # thread owns all reads, so command methods must not call readline().
+        self.__running = False
+        # True once the port has been closed, so disable()/__del__ are idempotent.
+        self.__closed = False
         self.frame_rx_handler = self.__def_frame_rx_handler
         self.new_frame_rx_handler = self.__def_new_frame_rx_handler
 
@@ -67,8 +74,22 @@ class LUC:
         self.new_frame_rx_handler = rx_handler
 
     def flushData(self, data):
-        self.ser.write(data)
+        with self.__serial_lock:
+            self.ser.write(data)
         logger.info(data)
+
+    def __command(self, data, expected):
+        """Send a command and confirm its reply.
+
+        While the converter is running (after enable()) the rx thread owns all
+        serial reads, so the reply cannot be read here without racing it; in
+        that case the command is written and True is returned. Before enable()
+        the reply is read and compared against the expected response string.
+        """
+        self.flushData(data)
+        if self.__running:
+            return True
+        return self.ser.readline().decode("utf-8") == expected
 
     def requestFirmwareVersion(self):
         self.flushData(b'v\r')
@@ -77,54 +98,68 @@ class LUC:
 
     def openAsMaster(self):
         """Open LIN Converter in Master mode"""
-        self.flushData(b'O\r')
-        return self.ser.readline().decode("utf-8") == '\r'
+        return self.__command(b'O\r', '\r')
 
     def lowSpeed(self):
         """LIN low speed"""
-        self.flushData(b'S2\r')
-        return self.ser.readline().decode("utf-8") == '\r'
+        return self.__command(b'S2\r', '\r')
 
     def highSpeed(self):
         """LIN high speed"""
-        self.flushData(b'S1\r')
-        return self.ser.readline().decode("utf-8") == '\r'
+        return self.__command(b'S1\r', '\r')
 
     def openAsSlave(self):
         """Open LIN Converter in slave mode"""
-        self.flushData(b'L\r')
-        return self.ser.readline().decode("utf-8") == '\r'
+        return self.__command(b'L\r', '\r')
 
     def openAsMonitor(self):
         """Open LIN Converter in monitor mode"""
-        self.flushData(b'l\r')
-        return self.ser.readline().decode("utf-8") == '\r'
+        return self.__command(b'l\r', '\r')
 
     def close(self):
         """Close LIN connection"""
-        self.flushData(b'C\r')
-        return self.ser.readline().decode("utf-8") == '\r'
+        return self.__command(b'C\r', '\r')
 
     def addTransmitFrameToTable(self, id, data):
-        """Add new frame to LIN Converter table"""
+        """Add a transmit frame to the LIN Converter table.
 
-        if (type(data)) is int:
-            data_str = hex(data).replace("0x", "")
+        In master/slave mode this registers the frame in the schedule table.
+        In monitor mode it transmits the frame immediately on the bus.
+
+        Parameters
+        ----------
+            id : int
+                LIN frame id (0..0x3F)
+            data : bytes-like or int
+                Frame payload. Pass bytes (e.g. b'\\x22\\x33'); an int is
+                accepted and encoded as a big-endian byte string.
+        """
+        return self.__command(self._format_transmit_line(id, data), 'z\r')
+
+    @staticmethod
+    def _format_transmit_line(id, data):
+        """Build the 't' transmit command bytes for a frame.
+
+        Returns the SLCAN line, e.g. b't00122233\\r' for id=1, data=b'\\x22\\x33'.
+        """
+        if isinstance(data, int):
+            data_str = format(data, 'x')
+            if len(data_str) % 2:
+                data_str = '0' + data_str
         else:
-            data_str = data.hex()
-        data_len = math.floor(len(data_str) / 2)
-        line = ('t0' + hex(id).replace("0x", "").rjust(2, '0') + str(data_len) + data_str + '\r')
-        self.flushData(line.encode())
-        return self.ser.readline().decode("utf-8") == 'z\r'
+            data_str = bytes(data).hex()
+        data_len = len(data_str) // 2
+        line = ('t0' + format(id, '02x') + str(data_len) + data_str + '\r')
+        return line.encode()
 
     def addReceptionFrameToTable(self, id, len):
-        """Add new header to LIN Converter table"""
-        line = ('r0' + hex(id).replace("0x", "").rjust(2, '0') + str(len) + '\r')
-        self.flushData(line.encode())
-        return self.ser.readline().decode("utf-8") == 'z\r'
+        """Add a reception header to the LIN Converter table"""
+        line = ('r0' + format(id, '02x') + str(len) + '\r')
+        return self.__command(line.encode(), 'z\r')
 
     def enable(self):
         """Enable frame sending"""
+        self.__running = True
         self.flushData(b'r1ff0\r')
         # r = (self.ser.readline().decode("utf-8") == 'z\r')
         self.__rx_byte_thread_handler.start()
@@ -132,14 +167,26 @@ class LUC:
         return 1
 
     def disable(self):
-        """Stop reception"""
+        """Stop reception.
+
+        Idempotent: safe to call more than once and after deInitSerial().
+        """
+        if self.__closed:
+            return False
+
         if self.__rx_byte_thread_handler.is_alive():
             self._stop_event.set()
             self.__rx_byte_thread_handler.join()
             self.__rx_frame_thread_handler.join()
 
+        # rx thread has stopped, so this method can safely read the reply again
+        self.__running = False
+
         time.sleep(0.010)
 
+        # Discard any received frames still buffered so the reply read below is
+        # not contaminated by them.
+        self.ser.reset_input_buffer()
         self.flushData(b'r2ff0\r')
         return self.ser.readline().decode("utf-8") == 'z\r'
 
@@ -202,9 +249,15 @@ class LUC:
             time.sleep(0.001)
 
     def deInitSerial(self):
-        self.ser.flush()
+        """Close the serial port. Idempotent: safe to call more than once."""
+        if self.__closed:
+            return
+        self.__closed = True
+        try:
+            self.ser.flush()
+        except Exception:
+            pass
         self.ser.close()
-        del self.ser
 
     def isRunning(self):
         """Simple function that returns true if rx thread is alive. Useful for implementation of exception and
@@ -213,5 +266,11 @@ class LUC:
         return self.__rx_byte_thread_handler.is_alive()
 
     def __del__(self):
-        self.disable()
-        self.deInitSerial()
+        try:
+            self.disable()
+        except Exception:
+            pass
+        try:
+            self.deInitSerial()
+        except Exception:
+            pass

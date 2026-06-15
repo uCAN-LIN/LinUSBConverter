@@ -1,0 +1,23 @@
+LIN_description_file;
+LIN_protocol_version = "2.1";
+LIN_language_version = "2.1";
+LIN_speed = 19.2 kbps;
+
+Nodes {
+  Master: Master, 5 ms, 0.1 ms;
+  Slaves: SlaveA;
+}
+
+Signals {
+  SIGNAL_A: 8, 0, Master, SlaveA;
+  SIGNAL_B: 4, 0, SlaveA, Master;
+}
+
+Frames {
+  FRAME_A: 52, Master, 1 {
+    SIGNAL_A, 0;
+  }
+  FRAME_B: 54, SlaveA, 1 {
+    SIGNAL_B, 0;
+  }
+}
