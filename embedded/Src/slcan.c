@@ -94,7 +94,7 @@ int slCanProccesInput(uint8_t ch)
 
     if (ch == SLCAN_CR) {
         line[linepos] = 0;
-        memcpy(command,line,linepos);
+        memcpy(command,line,linepos + 1); // include terminator, stale bytes must not be parsed
         linepos = 0;
         return 1;
     } else if (ch != SLCAN_LR) {
@@ -305,7 +305,7 @@ void slCanCheckCommand()
             if (line[2] == '4')
             {
         		uint32_t temp;
-        		parseHex(&line[3], 4, &temp);
+        		if (!parseHex(&line[3], 4, &temp) || (temp == 0)) break;
         		lin_baund_rate = temp;
         		MX_USART1_UART_Init();
         		open_lin_hw_reset();

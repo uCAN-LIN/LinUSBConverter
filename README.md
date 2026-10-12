@@ -114,11 +114,50 @@ Full command reference and examples: https://ucandevices.github.io/ulc.html
 
 ## Build
 
-Source is pure C. The firmware can be imported directly into **Atollic TrueSTUDIO for STM32 9.0.0** from `embedded/TrueSTUDIO/`. The USB CDC layer was generated with STM32CubeMX from `embedded/LUCEmbedded.ioc`.
+Source is pure C. Import the Eclipse project in `embedded/TrueSTUDIO/LUCEmbedded` into **STM32CubeIDE** (tested with 1.19) and build the `Debug` configuration; the image is `Debug/LUCEmbedded.bin`. The openLIN stack is vendored in `embedded/Src` (`open_lin_*.c/h`, `implementation/ST32`). The USB CDC layer was generated with STM32CubeMX from `embedded/LUCEmbedded.ioc`.
 
 ## Bootloader
 
 The STM32F042 has an embedded ROM USB DFU bootloader. To enter it from a running device send `boot\r` over the virtual COM port. See this [tutorial](https://www.youtube.com/watch?v=-gnX25AGyI0) for the flashing flow.
+
+With STM32CubeProgrammer installed, the flashing can be scripted:
+
+```bash
+python -c "import serial; serial.Serial('COM3').write(b'boot\r')"
+STM32_Programmer_CLI -c port=usb1 -w LUC_0302.bin 0x08000000 -v -g 0x08000000
+```
+
+---
+
+## Testing
+
+The test suite lives in [`python_lib/tests`](python_lib/tests) (pytest). It covers the firmware and the `ucanlintools` library:
+
+| File | Hardware | What it tests |
+|---|---|---|
+| `test_ldf_parser.py`, `test_linframe.py`, `test_luc_encoding.py` | none | LDF parsing, signal encode/decode, frame formatting |
+| `test_luc_hardware.py` | 1-2 dongles | Library: version query, mode switching, monitor loopback, master → slave |
+| `test_firmware_protocol.py` | 1-2 dongles | Firmware over raw serial: malformed-command rejection, 16-row table limit, all frame lengths 1-8 in both directions with exact data check, live data update, diagnostic frames 0x3C/0x3D, unanswered headers, extended `T`/`R` row timing, custom baud rate, monitor reception and monitor transmit. Parametrized for 19200 and 9600 baud. |
+| `test_lib_simulation.py` | 2 dongles | Scripted `MasterSimulation.py` / `SlaveSimulation.py`: LDF-encoded master frame, slave response, both changing at runtime, at both speeds |
+
+**Setup:** two converters on one LIN bus (LIN pins connected, external LIN supply applied). `LUC_MASTER_PORT` is used as LIN master, `LUC_SLAVE_PORT` as slave / monitor. Tests skip automatically when a port can't be opened, so the offline tests always run.
+
+```bash
+cd python_lib
+pip install pyserial lark bitstruct pytest
+LUC_MASTER_PORT=COM3 LUC_SLAVE_PORT=COM56 PYTHONPATH=. pytest tests -v
+# swap the ports and run again to test each converter in both roles
+LUC_MASTER_PORT=COM56 LUC_SLAVE_PORT=COM3 PYTHONPATH=. pytest tests -v
+```
+
+On Windows PowerShell set the variables with `$env:LUC_MASTER_PORT="COM3"` etc.
+
+### How firmware 3.2 was tested
+
+- Two uLC converters (hardware `V0001`), both flashed with `LUC_0302.bin`, connected on one powered LIN bus.
+- Full suite run twice with the roles swapped: **41/41 passed** in each direction (82 test runs).
+- Bus throughput measured during testing (4 s window, 16-frame schedule): every frame scheduled 12-14 times at 19200 baud and 10-11 times at 9600 baud, no lost or corrupted frames, no unexpected serial output.
+- The bugs fixed in 3.2 each have a regression test: malformed row locking the table, slave mode stalling after the first response at 9600 baud, slave mode not answering at all, master not reporting slave responses, and 6-8 byte responses timing out at 9600 baud.
 
 ---
 

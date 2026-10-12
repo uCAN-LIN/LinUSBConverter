@@ -12,6 +12,17 @@
 uint8_t lin_master_data[MAX_SLAVES_COUNT * 8];
 t_master_frame_table_item master_frame_table[MAX_SLAVES_COUNT];
 uint8_t master_frame_table_size = 0;
+extern uint32_t lin_baund_rate;
+/* slave network layer expects plain slot array, master table rows have offset/timeout in front */
+static open_lin_frame_slot_t slave_frame_table[MAX_SLAVES_COUNT];
+
+static void slcan_sync_slave_table(void){
+	uint8_t i;
+	for (i = 0; i < master_frame_table_size; i++)
+	{
+		slave_frame_table[i] = master_frame_table[i].slot;
+	}
+}
 
 t_master_frame_table_item* slcan_get_master_table_row(open_lin_pid_t id, int8_t* out_index){
 	uint8_t i = -1;
@@ -37,7 +48,7 @@ t_master_frame_table_item* slcan_get_master_table_row(open_lin_pid_t id, int8_t*
 //T013151502AA55
 //t0163112233
 
-void open_lin_net_init(t_master_frame_table_item *a_slot_array, l_u8 a_slot_array_len);
+//void open_lin_net_init(t_master_frame_table_item *a_slot_array, l_u8 a_slot_array_len);
 
 uint8_t addLinMasterRow(uint8_t* line) {
     uint32_t temp;
@@ -59,7 +70,8 @@ uint8_t addLinMasterRow(uint8_t* line) {
     if (line[1] == '1'){
     	if (lin_type == LIN_SLAVE)
     	{
-    		open_lin_net_init(master_frame_table,master_frame_table_size);
+    		slcan_sync_slave_table();
+    		open_lin_net_init(slave_frame_table,master_frame_table_size);
     	} else {
 			open_lin_master_dl_init(master_frame_table,master_frame_table_size);
     		 //wakeUpLin();
@@ -72,6 +84,7 @@ uint8_t addLinMasterRow(uint8_t* line) {
     if (!parseHex(&line[2], 2, &temp)) return 0;
 
 	array_ptr = slcan_get_master_table_row(temp, &out_index);
+    if (out_index >= MAX_SLAVES_COUNT) return 0; // table full
     array_ptr->slot.pid= temp;
     if ((temp == 0x3d) || (temp == 0x3c))
     {
@@ -80,7 +93,7 @@ uint8_t addLinMasterRow(uint8_t* line) {
     }
     // len
     if (!parseHex(&line[4 + offset], 1, &temp)) return 0;
-    if (array_ptr->slot.data_length  > 8) return 0;
+    if (temp > 8) return 0;
     array_ptr->slot.data_length = temp;
 
     // type
@@ -100,8 +113,8 @@ uint8_t addLinMasterRow(uint8_t* line) {
     } else
     {
 		array_ptr->offset_ms = 15;
-		// timeout
-		tFrame_Max_ms = (((uint16_t)array_ptr->slot.data_length * 10U + 44U) * 7U / 100U) + 1;
+		// timeout: 1.4 * frame bits at current baudrate (S1/S2/custom must be set before adding rows)
+		tFrame_Max_ms = (uint16_t)((((uint32_t)array_ptr->slot.data_length * 10U + 44U) * 1400U) / lin_baund_rate) + 1;
 		array_ptr->response_wait_ms = (uint8_t)(tFrame_Max_ms);
     }
 
@@ -116,6 +129,9 @@ uint8_t addLinMasterRow(uint8_t* line) {
 
     if ((out_index == master_frame_table_size) && (master_frame_table_size < MAX_SLAVES_COUNT))
     	 master_frame_table_size ++;
+
+    if (lin_type == LIN_SLAVE)
+    	slcan_sync_slave_table();
 
     return 1;
 }
