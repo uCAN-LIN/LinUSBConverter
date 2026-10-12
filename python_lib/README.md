@@ -74,7 +74,7 @@ lin = LUC(port, timeout=0.02, baudrate=9600)
 
 | Method | Sends | Returns | Notes |
 |--------|-------|---------|-------|
-| `requestFirmwareVersion()` | `v` | firmware string, e.g. `"0300"` | |
+| `requestFirmwareVersion()` | `v` | firmware string, e.g. `"0303"` | |
 | `close()` | `C` | `True` on ack | Returns the converter to CONFIG state. Safe to call first. |
 | `highSpeed()` | `S1` | `True` on ack | 19200 baud LIN bus. |
 | `lowSpeed()` | `S2` | `True` on ack | 9600 baud LIN bus. |
@@ -260,10 +260,22 @@ The test suite is pytest-based and lives in `tests/`:
 
 - **Offline tests** (no hardware): `test_ldf_parser.py`, `test_linframe.py`,
   `test_luc_encoding.py`.
-- **Hardware tests** (`test_luc_hardware.py`): single-dongle tests use the
-  port from `LUC_MASTER_PORT` (default `COM3`); the two-dongle master↔slave
-  test also needs `LUC_SLAVE_PORT` (default `COM33`). Hardware tests **skip
-  automatically** if the required dongle can't be opened.
+- **Hardware tests**: single-dongle tests use the port from `LUC_MASTER_PORT`
+  (default `COM3`); two-dongle tests also need `LUC_SLAVE_PORT` (default
+  `COM33`) on the same powered LIN bus. Hardware tests **skip automatically**
+  if the required dongle can't be opened.
+  - `test_luc_hardware.py` - library basics: version, mode switching,
+    monitor loopback, master → slave.
+  - `test_firmware_protocol.py` - firmware over the raw serial protocol:
+    command validation, table limits, all frame lengths in both directions,
+    diagnostic frames, timing, custom baud rate, monitor mode; at 19200 and
+    9600 baud.
+  - `test_lib_simulation.py` - scripted master/slave simulation with
+    `examples/example_LDF.ldf`.
+
+Run the suite twice with the two ports swapped to test each dongle as both
+master and slave. See the main [README](../README.md#testing) for how
+firmware releases are tested.
 
 ```bash
 cd python_lib

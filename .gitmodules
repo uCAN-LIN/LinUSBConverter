@@ -1,3 +1,0 @@
-[submodule "embedded/Src/open-LIN-c"]
-	path = embedded/Src/open-LIN-c
-	url =  git://github.com/open-LIN/open-LIN-c.git
