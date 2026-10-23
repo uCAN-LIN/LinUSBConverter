@@ -184,8 +184,11 @@ class Converter:
                 raise ToolError(f"converter I/O failed: {exc}") from exc
             finally:
                 try:
-                    ser.write(b"r2ff0\rC\r")
-                    time.sleep(0.05)
+                    # one command per write: the firmware handles only one
+                    # command per USB packet
+                    for cmd in (b"r2ff0\r", b"C\r"):
+                        ser.write(cmd)
+                        time.sleep(0.03)
                     ser.close()
                 except IO_ERRORS:
                     pass
