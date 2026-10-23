@@ -31,6 +31,7 @@ The LIN protocol implementation is based on [openLIN](https://github.com/open-LI
 - Device size 31 × 18 mm (without USB connector)
 - USB DFU bootloader for firmware updates
 - No proprietary drivers - Linux / macOS / Windows
+- **MCP server** so AI agents can sniff and reverse-engineer a LIN bus ([see below](#ai-agents-mcp-server))
 
 ---
 
@@ -75,6 +76,33 @@ while True:
 ```
 
 A higher-level Python library is provided in [`python_lib/`](python_lib/) (package `ucanlintools`).
+
+### AI agents (MCP server)
+
+[`python_lib/ucanlintools/mcp_server.py`](python_lib/ucanlintools/mcp_server.py) is an
+MCP server that lets an AI agent sniff and reverse-engineer a LIN bus: capture traffic
+with per-id periods and changing bits, log every data change while you press a button,
+find the bus speed and checksum type automatically, and decode or encode signals from
+an LDF file. It is **read-only by default**; sending frames and acting as master or
+slave needs `--allow-transmit`.
+
+```bash
+pip install -e "python_lib[mcp]"    # from this repo (Python 3.10+)
+ucanlin-mcp --mock                  # try it without hardware (simulated seat-module bus)
+```
+
+Register it with any MCP client as a stdio server:
+
+```json
+{
+  "mcpServers": {
+    "lin": {"command": "ucanlin-mcp", "args": ["--port", "COM3"]}
+  }
+}
+```
+
+Tools: `device_info`, `monitor_bus`, `detect_bus`, `load_ldf`, `decode_frame`,
+`encode_frame`, and with `--allow-transmit` also `send_frame`, `run_master`, `run_slave`.
 
 ---
 

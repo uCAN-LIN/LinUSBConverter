@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 setuptools.setup(
      name='ucanlintools',  
-     version='0.0.9',
+     version='0.1.0',
      author="ucan",
      author_email="ucandevices@mail.com",
      description="Local Interconnect Network (LIN) support for python",
@@ -17,8 +17,10 @@ setuptools.setup(
      packages = ['ucanlintools'],
      package_data = { '': ['*.lark'] },
      license = 'MIT',
-     keywords = ['LIN', 'LDF', 'LUC', 'uCAN', 'parser'],
+     keywords = ['LIN', 'LDF', 'LUC', 'uCAN', 'parser', 'mcp', 'car-hacking'],
      install_requires = ['pyserial','lark', 'bitstruct'],
+     extras_require = {'mcp': ['mcp>=2']},
+     entry_points = {'console_scripts': ['ucanlin-mcp=ucanlintools.mcp_server:main']},
 
      py_modules=['LUC','LDF_parser', 'LINFrame'],
      classifiers=[

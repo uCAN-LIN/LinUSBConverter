@@ -202,6 +202,41 @@ def listen(lin):
 
 ---
 
+## MCP server (AI agents)
+
+`ucanlintools.mcp_server` exposes the converter to AI agents over the Model
+Context Protocol (stdio). Install with the `mcp` extra (Python 3.10+):
+
+```bash
+pip install "ucanlintools[mcp]"
+ucanlin-mcp                     # auto-detect the converter, read-only
+ucanlin-mcp --port COM3 --allow-transmit
+ucanlin-mcp --mock              # simulated bus, no hardware
+```
+
+| Tool | What it does |
+|------|--------------|
+| `device_info` | Port, firmware, transmit flag, loaded LDF. |
+| `monitor_bus` | Passive capture: per-id count, period, last data, distinct values, `changing_bits` mask, and a time-ordered log of data changes. |
+| `detect_bus` | Tries 19200 / 10417 / 9600 baud with enhanced and classic checksum and reports which one sees frames. |
+| `load_ldf`, `decode_frame`, `encode_frame` | Signal names and values from an LDF. |
+| `send_frame` | Inject a frame from monitor mode (`--allow-transmit`). |
+| `run_master`, `run_slave` | Run a schedule or simulate a node for a few seconds (`--allow-transmit`). |
+
+Notes:
+
+- The server reads the serial port directly rather than through `LUC`, so
+  back-to-back frames are not dropped and each frame gets a host timestamp.
+- The converter drops frames whose checksum type does not match its setting,
+  so a bus can look silent in monitor mode until `detect_bus` finds the right
+  combination.
+- Signals are decoded with LIN bit order (LSB first, `bit_offset` from the
+  LDF). This differs from `LINFrame.decode`, which packs signals MSB first in
+  declaration order.
+- The port is opened per tool call and closed afterwards.
+
+---
+
 ## LDF parsing and signal encode/decode
 
 ```python
