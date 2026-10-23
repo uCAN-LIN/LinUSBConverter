@@ -1,0 +1,33 @@
+# Thin launcher package for the MCP Registry: `uvx ucan-lin-mcp` installs the
+# server from ucanlintools (python_lib/) together with the MCP SDK.
+# Build and upload from this folder:  python -m build && python -m twine upload dist/*
+
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ucan-lin-mcp"
+version = "0.1.0"
+description = "MCP server for the uCAN USB LIN Converter: let AI agents sniff and reverse-engineer a LIN bus"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [{ name = "ucan", email = "ucandevices@mail.com" }]
+keywords = ["mcp", "lin", "lin-bus", "automotive", "car-hacking", "ldf"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Interface Engine/Protocol Translator",
+]
+dependencies = ["ucanlintools>=0.1.0", "mcp>=2"]
+
+[project.urls]
+Homepage = "https://ucandevices.github.io/ulc.html"
+Source = "https://github.com/uCAN-LIN/LinUSBConverter"
+
+[project.scripts]
+ucan-lin-mcp = "ucanlintools.mcp_server:main"
+
+[tool.setuptools]
+packages = []

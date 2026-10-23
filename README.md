@@ -87,8 +87,8 @@ an LDF file. It is **read-only by default**; sending frames and acting as master
 slave needs `--allow-transmit`.
 
 ```bash
-pip install -e "python_lib[mcp]"    # from this repo (Python 3.10+)
-ucanlin-mcp --mock                  # try it without hardware (simulated seat-module bus)
+uvx ucan-lin-mcp --mock             # from PyPI, no install step (Python 3.10+)
+# or from this repo: pip install -e "python_lib[mcp]" && ucanlin-mcp --mock
 ```
 
 Register it with any MCP client as a stdio server:
@@ -96,10 +96,13 @@ Register it with any MCP client as a stdio server:
 ```json
 {
   "mcpServers": {
-    "lin": {"command": "ucanlin-mcp", "args": ["--port", "COM3"]}
+    "lin": {"command": "uvx", "args": ["ucan-lin-mcp", "--port", "COM3"]}
   }
 }
 ```
+
+`--mock` runs a simulated bus. [`mcp_package/`](mcp_package/) is the `ucan-lin-mcp` launcher
+package and [`server.json`](server.json) its MCP Registry entry.
 
 Tools: `device_info`, `monitor_bus`, `detect_bus`, `load_ldf`, `decode_frame`,
 `encode_frame`, and with `--allow-transmit` also `send_frame`, `run_master`, `run_slave`.
