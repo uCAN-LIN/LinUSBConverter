@@ -205,13 +205,14 @@ def listen(lin):
 ## MCP server (AI agents)
 
 `ucanlintools.mcp_server` exposes the converter to AI agents over the Model
-Context Protocol (stdio). Install with the `mcp` extra (Python 3.10+):
+Context Protocol (stdio). It is published on PyPI as `ucan-lin-mcp`
+(Python 3.10+):
 
 ```bash
-pip install "ucanlintools[mcp]"
-ucanlin-mcp                     # auto-detect the converter, read-only
-ucanlin-mcp --port COM3 --allow-transmit
-ucanlin-mcp --mock              # simulated bus, no hardware
+uvx ucan-lin-mcp                     # auto-detect the converter, read-only
+uvx ucan-lin-mcp --port COM3 --allow-transmit
+uvx ucan-lin-mcp --mock              # simulated bus, no hardware
+# from this repo instead: pip install -e ".[mcp]" && ucanlin-mcp --mock
 ```
 
 | Tool | What it does |
