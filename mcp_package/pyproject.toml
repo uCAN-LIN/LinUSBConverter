@@ -1,5 +1,6 @@
-# Thin launcher package for the MCP Registry: `uvx ucan-lin-mcp` installs the
-# server from ucanlintools (python_lib/) together with the MCP SDK.
+# Package for the MCP Registry: `uvx ucan-lin-mcp` runs the server.
+# setup.py copies the server and LDF modules from python_lib/ucanlintools at
+# build time, so this does not depend on a ucanlintools release.
 # Build and upload from this folder:  python -m build && python -m twine upload dist/*
 
 [build-system]
@@ -20,14 +21,14 @@ classifiers = [
     "Operating System :: OS Independent",
     "Topic :: Scientific/Engineering :: Interface Engine/Protocol Translator",
 ]
-dependencies = ["ucanlintools>=0.1.0", "mcp>=2"]
+dependencies = ["pyserial>=3.5", "lark>=1.1", "mcp>=2"]
 
 [project.urls]
 Homepage = "https://ucandevices.github.io/ulc.html"
 Source = "https://github.com/uCAN-LIN/LinUSBConverter"
 
 [project.scripts]
-ucan-lin-mcp = "ucanlintools.mcp_server:main"
+ucan-lin-mcp = "ucan_lin_mcp.mcp_server:main"
 
 [tool.setuptools]
-packages = []
+packages = ["ucan_lin_mcp"]

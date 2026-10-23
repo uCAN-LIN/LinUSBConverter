@@ -330,7 +330,7 @@ class Ldf:
 
     @classmethod
     def load(cls, path: str, text: str | None = None) -> "Ldf":
-        from ucanlintools.LDF_parser import parseLDF
+        from .LDF_parser import parseLDF
         if text is not None:
             import os
             import tempfile

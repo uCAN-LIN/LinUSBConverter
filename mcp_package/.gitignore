@@ -1,3 +1,5 @@
 build/
 dist/
 *.egg-info/
+# copied from python_lib/ucanlintools by setup.py
+ucan_lin_mcp/

@@ -1,5 +1,5 @@
 from lark import Lark, Transformer
-from ucanlintools.LINFrame import *
+from .LINFrame import *
 
 def ParseIntOrHex(x):
     try:

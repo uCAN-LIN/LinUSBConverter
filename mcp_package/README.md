@@ -5,8 +5,8 @@ lets an AI agent sniff and reverse-engineer a LIN bus.
 
 <!-- mcp-name: io.github.uCAN-LIN/lin-usb-converter -->
 
-This package only installs the `ucan-lin-mcp` command. The server itself is
-`ucanlintools.mcp_server` from [`ucanlintools`](https://pypi.org/project/ucanlintools/).
+The server is `ucanlintools.mcp_server` from this repo's Python library,
+bundled here so `uvx ucan-lin-mcp` works on its own.
 
 ```bash
 uvx ucan-lin-mcp --mock                 # simulated bus, no hardware
