@@ -9,7 +9,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ucan-lin-mcp"
-version = "0.1.0"
+version = "0.1.1"
 description = "MCP server for the uCAN USB LIN Converter: let AI agents sniff and reverse-engineer a LIN bus"
 readme = "README.md"
 license = "MIT"

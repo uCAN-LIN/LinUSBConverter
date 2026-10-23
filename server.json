@@ -1,9 +1,9 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.uCAN-LIN/lin-usb-converter",
+  "name": "io.github.Lukasz-Juranek/lin-usb-converter",
   "title": "USB LIN Converter",
   "description": "Sniff and reverse-engineer a car's LIN bus: capture, changing bits, speed detect, LDF decode",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "websiteUrl": "https://ucandevices.github.io/ulc.html",
   "repository": {
     "url": "https://github.com/uCAN-LIN/LinUSBConverter",
@@ -13,7 +13,7 @@
     {
       "registryType": "pypi",
       "identifier": "ucan-lin-mcp",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "runtimeHint": "uvx",
       "transport": {
         "type": "stdio"

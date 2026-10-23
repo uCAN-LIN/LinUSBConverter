@@ -3,7 +3,7 @@
 MCP server for the [uCAN USB LIN Converter](https://ucandevices.github.io/ulc.html):
 lets an AI agent sniff and reverse-engineer a LIN bus.
 
-<!-- mcp-name: io.github.uCAN-LIN/lin-usb-converter -->
+<!-- mcp-name: io.github.Lukasz-Juranek/lin-usb-converter -->
 
 The server is `ucanlintools.mcp_server` from this repo's Python library,
 bundled here so `uvx ucan-lin-mcp` works on its own.
