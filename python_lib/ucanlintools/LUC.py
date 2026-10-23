@@ -41,6 +41,8 @@ class LUC:
         self.__rx_byte_thread_handler = threading.Thread(target=self.__rxThread, args=())
         self.__rx_frame_thread_handler = threading.Thread(target=self.__newFrameProcess, args=())
         self.__uart_buffer = ''
+        # Guards __uart_buffer: the byte thread appends, the frame thread consumes.
+        self.__buffer_lock = threading.Lock()
         self._stop_event = threading.Event()
         # Guards serial writes; writes may come from the main thread and from
         # rx handlers (which run in the frame-processing thread).
@@ -199,8 +201,9 @@ class LUC:
                 break
 
             while self.ser.in_waiting > 0:
-                cc = self.ser.read(self.ser.in_waiting).decode('ascii')
-                self.__uart_buffer += cc
+                cc = self.ser.read(self.ser.in_waiting).decode('ascii', 'replace')
+                with self.__buffer_lock:
+                    self.__uart_buffer += cc
             time.sleep(0.001)
 
     def __newFrameProcess(self):
@@ -219,34 +222,51 @@ class LUC:
             if self._stop_event.is_set():
                 return None
 
-            if len(self.__uart_buffer) > 1000:
-                self.__uart_buffer = ''
-
-            start = self.__uart_buffer.find('t')
-            end = self.__uart_buffer.find('\r')
-
-            if start != -1 and end != -1:
-                if start > (end - 5):
-                    self.__uart_buffer = self.__uart_buffer[start:]
+            # Take one CR-terminated line off the buffer, keeping whatever
+            # follows it: several frames often arrive in one USB read.
+            with self.__buffer_lock:
+                end = self.__uart_buffer.find('\r')
+                if end == -1:
+                    if len(self.__uart_buffer) > 1000:      # no terminator: garbage
+                        self.__uart_buffer = ''
+                    line = None
                 else:
-                    frame_string = self.__uart_buffer[start:end]
+                    line = self.__uart_buffer[:end]
+                    self.__uart_buffer = self.__uart_buffer[end + 1:]
 
-                    self.__uart_buffer = ''
-                    lf = LINFrame()
-                    try:
-                        lf.id = int(frame_string[2:4], 16)
-                        lf.data = bytes.fromhex(frame_string[5:])
-                        return lf
-                    except ValueError:
-                        pass
-                        # @TODO FIXME this should not occur but sometimes does ...
-                        # JP: found this error when using default serial baudrate 9600. Changing it to 19200 fixed
-                        # the issue for me. Added as optional argument to initialization.
-                        # print ("!!id " + frame_string[2:4])
-                        # print ("!!data " + frame_string[5:])
-                        # print ("!!wf " + frame_string)       
+            if line is None:
+                time.sleep(0.001)
+                continue
 
-            time.sleep(0.001)
+            lf = self._parse_frame_line(line)
+            if lf is not None:
+                return lf
+
+    @staticmethod
+    def _parse_frame_line(line):
+        """Parse a received 't0<id><len><data>' line into a LINFrame.
+
+        Command replies ('z', 'Z', BEL) sharing the line are skipped. Returns
+        None for anything that is not a well-formed frame.
+        """
+        start = line.find('t')
+        if start == -1:
+            return None
+        s = line[start:]
+        if len(s) < 5:
+            return None
+        try:
+            fid = int(s[2:4], 16)
+            n = int(s[4], 16)
+            data = bytes.fromhex(s[5:5 + 2 * n])
+        except ValueError:
+            return None
+        if len(data) != n:
+            return None
+        lf = LINFrame()
+        lf.id = fid
+        lf.data = data
+        return lf
 
     def deInitSerial(self):
         """Close the serial port. Idempotent: safe to call more than once."""

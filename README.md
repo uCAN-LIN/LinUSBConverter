@@ -173,7 +173,7 @@ The test suite lives in [`python_lib/tests`](python_lib/tests) (pytest). It cove
 
 ```bash
 cd python_lib
-pip install pyserial lark bitstruct pytest
+pip install pyserial lark pytest
 LUC_MASTER_PORT=COM3 LUC_SLAVE_PORT=COM56 PYTHONPATH=. pytest tests -v
 # swap the ports and run again to test each converter in both roles
 LUC_MASTER_PORT=COM56 LUC_SLAVE_PORT=COM3 PYTHONPATH=. pytest tests -v

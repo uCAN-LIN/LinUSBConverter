@@ -16,12 +16,12 @@ virtual serial port (STMicroelectronics VID `0483` / PID `5740`).
 ```bash
 pip install ucanlintools          # from PyPI
 # or, from a checkout of this repo:
-pip install pyserial lark bitstruct
+pip install pyserial lark
 ```
 
-Dependencies: `pyserial` (serial I/O), `lark` (LDF grammar), `bitstruct`
-(signal packing). `lark` and `bitstruct` are only needed if you use the LDF /
-signal features; `LUC` itself needs only `pyserial`.
+Dependencies: `pyserial` (serial I/O) and `lark` (LDF grammar). `lark` is
+only needed if you use the LDF / signal features; `LUC` itself needs only
+`pyserial`.
 
 ---
 
@@ -226,18 +226,25 @@ ucanlin-mcp --mock              # simulated bus, no hardware
 Notes:
 
 - The server reads the serial port directly rather than through `LUC`, so
-  back-to-back frames are not dropped and each frame gets a host timestamp.
+  each frame gets a host timestamp.
 - The converter drops frames whose checksum type does not match its setting,
   so a bus can look silent in monitor mode until `detect_bus` finds the right
   combination.
 - Signals are decoded with LIN bit order (LSB first, `bit_offset` from the
-  LDF). This differs from `LINFrame.decode`, which packs signals MSB first in
-  declaration order.
+  LDF), the same as `LINFrame`.
 - The port is opened per tool call and closed afterwards.
 
 ---
 
 ## LDF parsing and signal encode/decode
+
+Signals are packed in LIN bit order: the frame is one little-endian number
+and each signal sits at its `bit_offset` from the LDF (bit 0 = LSB of byte 0).
+
+> **Changed in 0.1.0:** up to 0.0.9 `encode`/`decode` packed signals MSB
+> first in declaration order and ignored `bit_offset`, so sub-byte signals
+> came out in the wrong place (e.g. a 4-bit signal at offset 0 encoded as
+> `0x10` instead of `0x01`). Byte-aligned 8-bit signals are unaffected.
 
 ```python
 from ucanlintools.LDF_parser import parseLDF
@@ -283,7 +290,6 @@ lin.set_new_frame_rx_handler(on_new)
   reply). The threads are still stopped.
 - **LDF support is partial:** only `Signals` and `Frames` sections are used;
   schedule tables, encoding types and node attributes are parsed but ignored.
-  Maximum signal size is 1 byte.
 - `enable()` may be called only once per `LUC` instance (threads can't be
   restarted). Create a new `LUC` to run again.
 

@@ -59,7 +59,9 @@ def test_ldf_master_slave_simulation(master_port, slave_port, speed):
     assert bl[-1] == bytes(backlight.encode({"backlight_level": 7}))
     assert bs[0] == b"\x00\x00" and bs[-1] == b"\x01\x03"
 
-    buttons.decode(bs[-1])
-    assert "'button_2' : 1" in buttons.diff_str()
+    # LIN bit order: byte 0 = 0x01 -> button_1 (bits 0-3) = 1, button_2 (bits 4-7) = 0,
+    # byte 1 = 0x03 -> backlight_status (bits 8-11) = 3
+    assert buttons.decode(bs[-1]) == (1, 0, 3)
+    assert "'button_1' : 1" in buttons.diff_str()
     # new-frame handler fires once per distinct payload only
     assert [d for i, d in master_new if i == buttons.id] == [b"\x00\x00", b"\x01\x03"]

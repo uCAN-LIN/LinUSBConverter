@@ -18,7 +18,7 @@ setuptools.setup(
      package_data = { '': ['*.lark'] },
      license = 'MIT',
      keywords = ['LIN', 'LDF', 'LUC', 'uCAN', 'parser', 'mcp', 'car-hacking'],
-     install_requires = ['pyserial','lark', 'bitstruct'],
+     install_requires = ['pyserial','lark'],
      extras_require = {'mcp': ['mcp>=2']},
      entry_points = {'console_scripts': ['ucanlin-mcp=ucanlintools.mcp_server:main']},
 

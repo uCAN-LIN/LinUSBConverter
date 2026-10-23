@@ -3,8 +3,8 @@ start: ldf_container
 ?ldf_container: ldf_header [(ldf_nodes | ldf_signals | ldf_frames | ldf_diagnostic | ldf_diagnostic_frames | ldf_node_atributes | ldf_schedule_table | ldf_signal_encoding_types | ldf_signal_representation)*]
 
 ?ldf_nodes : "Nodes" "{" [ldf_node_master] [ldf_node_slaves] "}" 
-?ldf_signals : "Signals" "{" [ldf_signal (ldf_signal)*] "}"  
-?ldf_frames : "Frames" "{" [ldf_frame (ldf_frame)*] "}" 
+ldf_signals : "Signals" "{" [ldf_signal (ldf_signal)*] "}"  
+ldf_frames : "Frames" "{" [ldf_frame (ldf_frame)*] "}" 
 
 ?ldf_diagnostic : "Diagnostic_signals" "{" [(ANY_SEMICOLON_TERMINATED_LINE)*] "}"
 ?ldf_diagnostic_frames : "Diagnostic_frames" "{" [(ldf_diagnostic_master_req | ldf_diagnostic_slave_resp)*] "}"
