@@ -7,7 +7,7 @@
 > **Open source USB ↔ LIN bus dongle. LIN 2.1 master, slave or monitor. SLCAN-compatible virtual COM port - works on Windows, Linux and macOS with no proprietary drivers.**
 
 <p align="center">
-  <img src="https://ucandevices.github.io/img/products/ulc.png" alt="USB LIN Converter (uLC) - dongle photo" width="60%">
+  <img src="https://ucandevices.github.io/img/products/ulc.webp" alt="USB LIN Converter (uLC) - dongle photo" width="60%">
 </p>
 
 The **USB LIN Converter (uLC)** is a small open-source USB dongle (STM32F042C6, ~31 × 18 mm) that lets a PC act as a LIN bus master, slave or passive monitor. It enumerates as a USB CDC virtual COM port and speaks an SLCAN-style ASCII protocol, so it bridges into Linux SocketCAN via `slcand` and works with parts of can-utils.
@@ -22,8 +22,8 @@ The LIN protocol implementation is based on [openLIN](https://github.com/open-LI
 
 - LIN 2.1 support
 - **Monitor mode** - full frame reception plus single-frame transmission
-- **Master mode** - up to 15 scheduled frame slots
-- **Slave mode** - up to 15 scheduled frame slots for slave simulation
+- **Master mode** - up to 16 scheduled frame slots
+- **Slave mode** - up to 16 scheduled frame slots for slave simulation
 - 9600 / 19200 baud rate selection
 - **Optical isolation** between LIN and the USB / PC side
 - Software-controlled termination resistors
@@ -199,7 +199,7 @@ On Windows PowerShell set the variables with `$env:LUC_MASTER_PORT="COM3"` etc.
 The uCanDevices USB LIN Converter (uLC) is an open source dongle around $27 that enumerates as a USB CDC virtual COM port on Linux, macOS and Windows. It uses an SLCAN-style ASCII protocol so it bridges into SocketCAN via `slcand`.
 
 **Does it support master and slave mode?**
-Yes - monitor (full reception plus single-frame transmission), master (up to 15 scheduled slots) and slave (up to 15 slots for slave simulation). Modes are selected with the `O`, `L` and `l` commands.
+Yes - monitor (full reception plus single-frame transmission), master (up to 16 scheduled slots) and slave (up to 16 slots for slave simulation). Modes are selected with the `O`, `L` and `l` commands.
 
 **Is the LIN side optically isolated from the USB host?**
 Yes. The LIN transceiver is optically isolated from the PC side, protecting the host from automotive transients. The LIN side needs an external 4.5 - 28 V supply since USB only powers the MCU.
