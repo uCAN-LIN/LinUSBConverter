@@ -204,6 +204,18 @@ void lin_slcan_rx(l_u8 rx_byte)
 {
 	if (open_lin_hw_check_for_break() == l_true)
 	{
+		/* Next frame started before the idle timeout ended the previous one
+		 * (back-to-back frames): report the previous frame now instead of
+		 * dropping it. The break itself arrived as a 0x00 data byte. */
+		if ((slcan_lin_slave_state == OPEN_LIN_SLAVE_DATA_RX) && (slcan_lin_timeout_counter != 0))
+		{
+			if ((slcan_lin_slave_state_data_count > 0) &&
+				(slcan_lin_data_array[slcan_lin_slave_state_data_count - 1] == 0))
+			{
+				slcan_lin_slave_state_data_count--;
+			}
+			lin_slcan_rx_timeout_handler();
+		}
 		lin_slcan_reset();
 		slcan_lin_slave_state = OPEN_LIN_SLAVE_PID_RX;
 		#ifdef OPEN_LIN_AUTO_BAUND

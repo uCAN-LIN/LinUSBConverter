@@ -157,7 +157,7 @@ With STM32CubeProgrammer installed, the flashing can be scripted:
 
 ```bash
 python -c "import serial; serial.Serial('COM3').write(b'boot\r')"
-STM32_Programmer_CLI -c port=usb1 -w LUC_0307.bin 0x08000000 -v -g 0x08000000
+STM32_Programmer_CLI -c port=usb1 -w LUC_0308.bin 0x08000000 -v -g 0x08000000
 ```
 
 ---
@@ -170,7 +170,7 @@ The test suite lives in [`python_lib/tests`](python_lib/tests) (pytest). It cove
 |---|---|---|
 | `test_ldf_parser.py`, `test_linframe.py`, `test_luc_encoding.py` | none | LDF parsing, signal encode/decode, frame formatting |
 | `test_luc_hardware.py` | 1-2 dongles | Library: version query, mode switching, monitor loopback, master → slave |
-| `test_firmware_protocol.py` | 1-2 dongles | Firmware over raw serial: malformed-command rejection, 16-row table limit, all frame lengths 1-8 in both directions with exact data check, live data update, diagnostic frames 0x3C/0x3D, unanswered headers, extended `T`/`R` row timing, custom baud rate, monitor reception and monitor transmit. Parametrized for 19200 and 9600 baud. |
+| `test_firmware_protocol.py` | 1-2 dongles | Firmware over raw serial: malformed-command rejection, 16-row table limit, all frame lengths 1-8 in both directions with exact data check, live data update, diagnostic frames 0x3C/0x3D, unanswered headers, extended `T`/`R` row timing, custom baud rate, monitor reception (including back-to-back frames) and monitor transmit. Parametrized for 19200 and 9600 baud. |
 | `test_lib_simulation.py` | 2 dongles | Scripted `MasterSimulation.py` / `SlaveSimulation.py`: LDF-encoded master frame, slave response, both changing at runtime, at both speeds |
 
 **Setup:** two converters on one LIN bus (LIN pins connected, external LIN supply applied). `LUC_MASTER_PORT` is used as LIN master, `LUC_SLAVE_PORT` as slave / monitor. Tests skip automatically when a port can't be opened, so the offline tests always run.
@@ -184,6 +184,13 @@ LUC_MASTER_PORT=COM56 LUC_SLAVE_PORT=COM3 PYTHONPATH=. pytest tests -v
 ```
 
 On Windows PowerShell set the variables with `$env:LUC_MASTER_PORT="COM3"` etc.
+
+### How firmware 3.8 was tested
+
+- Same setup, both converters flashed with `LUC_0308.bin`.
+- Monitor fix: frames sent back to back (each one as soon as the previous command was acknowledged, about 4 ms apart at 19200 baud) leave less idle time than the monitor's end-of-frame timeout, so the next break reset the reception and the previous frame was lost. The monitor now reports the previous frame when the next break arrives. Before: 15 of 32 frames received; with the fix: 32 of 32, in order.
+- New regression test `test_monitor_reports_back_to_back_frames` (fails on 3.7, passes on 3.8); full suite run twice with the roles swapped: **66/66 passed** in each direction.
+- CANgaroo uLC driver hardware test (two converters, Windows): 32/32 checks passed.
 
 ### How firmware 3.7 was tested
 

@@ -319,3 +319,20 @@ def test_monitor_transmit_received_by_slave(pair):
     time.sleep(0.3)
     f, _ = frames(other.drain())
     assert set(f.get(0x16, [])) == {"AA55"} and len(f[0x16]) >= 4
+
+
+def test_monitor_reports_back_to_back_frames(pair):
+    """Frames sent as fast as the device acks them leave less idle time than the
+    monitor's end-of-frame timeout; the next break must not drop the previous frame."""
+    tx, mon = pair
+    for d in (tx, mon):
+        d.cmd("S1")
+        d.cmd("l")
+    mon.drain()
+    for i in range(32):
+        tx.ser.write(f"t0221{i:02X}\r".encode())
+        while (line := tx.ser.read_until(b"\r")) != b"z\r":
+            assert line, f"no ack for frame {i}"
+    time.sleep(0.2)
+    f, _ = frames(mon.drain())
+    assert f.get(0x22) == [f"{i:02X}" for i in range(32)]
