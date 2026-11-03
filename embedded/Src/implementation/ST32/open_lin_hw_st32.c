@@ -15,10 +15,16 @@
 #include <stm32f0xx_hal_uart.h>
 #include <stm32f0xx.h>
 extern UART_HandleTypeDef huart1;
+extern uint32_t lin_baund_rate;
 
 void open_lin_error_handler(t_open_lin_error error_code)
 {
 	/* no error handling */
+}
+
+uint32_t open_lin_hw_baud_rate(void)
+{
+	return lin_baund_rate;
 }
 
 l_bool open_lin_hw_check_for_break(void)

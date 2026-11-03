@@ -127,7 +127,8 @@ All commands are ASCII terminated with CR (`0x0D`). Errors return `0x07` (BEL).
 | `r2ff0` | Clear schedule table |
 | `r31` / `r30` | Checksum for all frames: `r31` classic (LIN 1.x), `r30` enhanced (LIN 2.x, default). Diagnostic frames 0x3C/0x3D always use classic. Replies `Z`. Kept until power off; `t31`/`t30` work too. |
 | `t04bbbb` | Custom LIN baud rate, `bbbb` = 4 hex digits (e.g. `t0428B1` = 10417 baud). Send before adding frames. Replies `Z`. |
-| `T0iipptt0ldd...` / `R0iipptt0l` | Frame with explicit period `pp` and response wait time `tt` (ms, hex), e.g. `T00A643001A5` |
+| `T0iipptt0ldd...` / `R0iipptt0l` | Frame with explicit delay `pp` and response wait time `tt` (ms, hex), e.g. `T00A643001A5`. `pp` is the time from the start of the previous slot's header to this slot's header (firmware 3.4 and later; older firmware started it when the previous frame ended). |
+| | Commands are executed one at a time: wait for the reply (CR, `z`/`Z` or BEL) before sending the next one. |
 
 Full command reference and examples: https://ucandevices.github.io/ulc.html
 
@@ -156,7 +157,7 @@ With STM32CubeProgrammer installed, the flashing can be scripted:
 
 ```bash
 python -c "import serial; serial.Serial('COM3').write(b'boot\r')"
-STM32_Programmer_CLI -c port=usb1 -w LUC_0303.bin 0x08000000 -v -g 0x08000000
+STM32_Programmer_CLI -c port=usb1 -w LUC_0304.bin 0x08000000 -v -g 0x08000000
 ```
 
 ---
@@ -183,6 +184,12 @@ LUC_MASTER_PORT=COM56 LUC_SLAVE_PORT=COM3 PYTHONPATH=. pytest tests -v
 ```
 
 On Windows PowerShell set the variables with `$env:LUC_MASTER_PORT="COM3"` etc.
+
+### How firmware 3.4 was tested
+
+- Two uLC converters (hardware `V0001`), both flashed with `LUC_0304.bin`, connected on one powered LIN bus.
+- Full suite run twice with the roles swapped: **55/55 passed** in each direction (110 test runs).
+- Master slot timing measured with the second converter as monitor (3 s window, 19200 baud): the slot period now matches the configured delay within about 1 ms for 0, 2, 4 and 8 data bytes, for 10, 20 and 40 ms delays, and for unanswered subscriber slots. Firmware 3.3 added the frame time to every slot (+2 to +6 ms) and the full response timeout to unanswered subscriber slots (+12 ms).
 
 ### How firmware 3.3 was tested
 

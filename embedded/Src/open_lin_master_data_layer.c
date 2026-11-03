@@ -28,11 +28,34 @@ static void open_lin_master_goto_idle(l_bool next_item);
 static void data_layer_next_item(void);
 static t_master_frame_table_item* get_current_item(void);
 
+/* Slot timing: a slot's offset_ms is the time from the start of the previous
+ * slot's header to the start of this one, as the delay in an LDF schedule.
+ * The scheduler runs from the 1 ms SysTick and the UART transmit blocks inside
+ * that interrupt, so ticks that pass while a frame is sent are lost, apart from
+ * the one SysTick left pending. The rest is added from the frame's bit count. */
+static void open_lin_master_add_tx_time(l_u16 bits)
+{
+	static uint32_t lost_us = 0;
+	uint32_t baud = open_lin_hw_baud_rate();
+	uint32_t tx_us;
+
+	if (baud == 0u)
+	{
+		return;
+	}
+	tx_us = ((uint32_t)bits * 1000000u) / baud;
+	if (tx_us > 1000u)
+	{
+		lost_us += tx_us - 1000u;
+		time_passed_since_last_frame_ms += (l_u16)(lost_us / 1000u);
+		lost_us %= 1000u;
+	}
+}
+
 static void open_lin_master_goto_idle(l_bool next_item)
 {
 	master_rx_count = 0;
 	lin_master_state = OPEN_LIN_MASTER_IDLE;
-	time_passed_since_last_frame_ms = 0;
 	if (next_item)
 	{
 		data_layer_next_item();
@@ -46,6 +69,7 @@ void open_lin_master_dl_init(t_master_frame_table_item *p_master_frame_table, l_
 {
 	master_frame_table = p_master_frame_table;
 	master_frame_table_size = p_master_frame_table_size;
+	time_passed_since_last_frame_ms = 0;
 	open_lin_master_goto_idle(l_false);
 }
 
@@ -127,16 +151,19 @@ void open_lin_master_dl_handler(l_u8 ms_passed)
 		time_passed_since_last_frame_ms += ms_passed;
 		if (lin_master_state == OPEN_LIN_MASTER_IDLE)
 		{
-			if ((master_table_item->offset_ms) < time_passed_since_last_frame_ms)
+			if (time_passed_since_last_frame_ms >= master_table_item->offset_ms)
 			{
 				time_passed_since_last_frame_ms = 0;
 				if (open_lin_master_data_tx_header(&master_table_item->slot) == l_true)
 				{
 					if (master_table_item->slot.frame_type == OPEN_LIN_FRAME_TYPE_TRANSMIT)
 					{
+						/* header (break, sync, PID) and the data + checksum sent below in this call */
+						open_lin_master_add_tx_time((l_u16)(34u + 10u * (master_table_item->slot.data_length + 1u)));
 						lin_master_state = OPEN_LIN_MASTER_TX_DATA;
 					} else
 					{
+						open_lin_master_add_tx_time(34u);
 						lin_master_state = OPEN_LIN_MASTER_DATA_RX;
 						master_rx_count = 0;
 						open_lin_set_rx_enabled(true);

@@ -34,6 +34,13 @@ l_bool open_lin_hw_tx_break(void);
 
 l_bool open_lin_hw_tx_byte(l_u8 data);
 
+/**
+ * @brief Current LIN baud rate
+ *
+ * @return baud rate in bit/s
+ */
+uint32_t open_lin_hw_baud_rate(void);
+
 #ifdef OPEN_LIN_AUTO_BAUND
 /**
  * @brief Starts auto baud procedure
