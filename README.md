@@ -3,6 +3,7 @@
 [![Buy on Tindie](https://img.shields.io/badge/Tindie-Buy_USB_LIN_Converter-fb5b1b?logo=tindie&logoColor=white)](https://www.tindie.com/products/lll7/usb-lin-converter/)
 [![Buy on Lectronz](https://img.shields.io/badge/Lectronz-Buy_in_EU-5468ff)](https://lectronz.com/stores/ucandevices)
 [![Product page](https://img.shields.io/badge/docs-ucandevices.github.io-1f6feb)](https://ucandevices.github.io/ulc.html)
+[![CI](https://github.com/uCAN-LIN/LinUSBConverter/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/uCAN-LIN/LinUSBConverter/actions/workflows/ci.yml)
 
 > **Open source USB ↔ LIN bus dongle. LIN 2.1 master, slave or monitor. SLCAN-compatible virtual COM port - works on Windows, Linux and macOS with no proprietary drivers.**
 
