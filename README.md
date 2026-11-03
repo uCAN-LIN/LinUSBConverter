@@ -10,7 +10,7 @@
   <img src="https://ucandevices.github.io/img/products/ulc.webp" alt="USB LIN Converter (uLC) - dongle photo" width="60%">
 </p>
 
-The **USB LIN Converter (uLC)** is a small open-source USB dongle (STM32F042C6, ~31 × 18 mm) that lets a PC act as a LIN bus master, slave or passive monitor. It enumerates as a USB CDC virtual COM port and speaks an SLCAN-style ASCII protocol, so it bridges into Linux SocketCAN via `slcand` and works with parts of can-utils.
+The **USB LIN Converter (uLC)** is a small open-source USB dongle (STM32F042, ~31 × 18 mm) that lets a PC act as a LIN bus master, slave or passive monitor. It enumerates as a USB CDC virtual COM port and speaks an SLCAN-style ASCII protocol, so it bridges into Linux SocketCAN via `slcand` and works with parts of can-utils.
 
 A commercial automotive LIN analyzer typically costs hundreds to thousands of euros. This one is around **$27** on [Tindie](https://www.tindie.com/products/lll7/usb-lin-converter/).
 
@@ -138,7 +138,7 @@ Full command reference and examples: https://ucandevices.github.io/ulc.html
 
 | Directory | Contents |
 |---|---|
-| [`embedded/`](embedded/) | STM32F042C6 firmware sources (STM32CubeMX project `LUCEmbedded.ioc`, Atollic TrueSTUDIO project under `embedded/TrueSTUDIO/`). USB layer generated with STM32CubeMX. |
+| [`embedded/`](embedded/) | STM32F042 firmware sources (STM32CubeMX project `LUCEmbedded.ioc`, Atollic TrueSTUDIO project under `embedded/TrueSTUDIO/`). USB layer generated with STM32CubeMX. |
 | [`pcb/`](pcb/) | Open-hardware KiCad project for the LIN_USB_CONVERTER board, Gerbers and 1-click BOM. |
 | [`python_lib/`](python_lib/) | `ucanlintools` Python package with high-level master / slave / monitor helpers and examples. |
 | [`doc/`](doc/) | LIN 2.2A specification, MCU datasheet, LIN transceiver datasheet and supporting documents. |
