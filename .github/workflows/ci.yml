@@ -70,13 +70,12 @@ jobs:
         working-directory: python_lib
         run: python -m pytest -rs
 
-      - name: MCP package copies match python_lib
-        run: |
-          for f in LDF_parser.py LINFrame.py mcp_server.py; do
-            diff -u "python_lib/ucanlintools/$f" "mcp_package/ucan_lin_mcp/$f"
-          done
-
-      - name: Build MCP package
+      # setup.py copies its modules from python_lib, so this checks the
+      # published package (ucan-lin-mcp) builds and starts.
+      - name: Build and smoke-test MCP package
         run: |
           pip install build
           python -m build mcp_package --outdir dist-mcp
+          python -m venv /tmp/mcp-venv
+          /tmp/mcp-venv/bin/pip install dist-mcp/*.whl
+          /tmp/mcp-venv/bin/ucan-lin-mcp --help
