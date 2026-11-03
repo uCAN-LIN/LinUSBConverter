@@ -3,7 +3,7 @@
   "name": "io.github.Lukasz-Juranek/lin-usb-converter",
   "title": "USB LIN Converter",
   "description": "Sniff and reverse-engineer a car's LIN bus: capture, changing bits, speed detect, LDF decode",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "websiteUrl": "https://ucandevices.github.io/ulc.html",
   "repository": {
     "url": "https://github.com/uCAN-LIN/LinUSBConverter",
@@ -13,7 +13,7 @@
     {
       "registryType": "pypi",
       "identifier": "ucan-lin-mcp",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "runtimeHint": "uvx",
       "transport": {
         "type": "stdio"

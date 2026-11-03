@@ -42,7 +42,7 @@ from mcp.server.mcpserver.exceptions import ToolError
 USB_IDS = {(0x1209, 0x2779), (0x0483, 0x5740)}
 MAX_DURATION_S = 60.0
 MAX_CHANGES = 200
-MAX_TABLE = 15                 # firmware schedule slots
+MAX_TABLE = 16                 # firmware schedule slots
 REPLY_TIMEOUT_S = 0.5
 SPEEDS = (19200, 10417, 9600)
 IO_ERRORS = (OSError, serial.SerialException)
