@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  firmware:
+    name: Firmware build
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install ARM toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends gcc-arm-none-eabi libnewlib-arm-none-eabi make
+
+      - name: Build
+        working-directory: embedded
+        run: make -j"$(nproc)"
+
+      - name: Report flash usage
+        working-directory: embedded
+        run: |
+          major=$(sed -n 's/.*VERSION_FIRMWARE_MAJOR *\([0-9]*\).*/\1/p' Src/slcan.h)
+          minor=$(sed -n 's/.*VERSION_FIRMWARE_MINOR *\([0-9]*\).*/\1/p' Src/slcan.h)
+          name=$(printf 'LUC_%02d%02d' "$major" "$minor")
+          cp build/LUCEmbedded.bin "build/$name.bin"
+          echo "FW_NAME=$name" >> "$GITHUB_ENV"
+          size=$(stat -c %s build/LUCEmbedded.bin)
+          {
+            echo "### Firmware $major.$minor"
+            echo "| | bytes |"
+            echo "|---|---|"
+            echo "| Image | $size |"
+            echo "| Free on STM32F042x4 (16 KB) | $((16384 - size)) |"
+            echo "| Free on STM32F042x6 (32 KB) | $((32768 - size)) |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.FW_NAME }}
+          path: |
+            embedded/build/${{ env.FW_NAME }}.bin
+            embedded/build/LUCEmbedded.elf
+            embedded/build/LUCEmbedded.map
+
+  python:
+    name: Python tests (${{ matrix.python }})
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Install
+        run: pip install "./python_lib[mcp]" pytest
+
+      # Hardware tests skip themselves when no converter is connected.
+      - name: Test
+        working-directory: python_lib
+        run: python -m pytest -rs
+
+      - name: MCP package copies match python_lib
+        run: |
+          for f in LDF_parser.py LINFrame.py mcp_server.py; do
+            diff -u "python_lib/ucanlintools/$f" "mcp_package/ucan_lin_mcp/$f"
+          done
+
+      - name: Build MCP package
+        run: |
+          pip install build
+          python -m build mcp_package --outdir dist-mcp
