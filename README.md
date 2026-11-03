@@ -157,7 +157,7 @@ With STM32CubeProgrammer installed, the flashing can be scripted:
 
 ```bash
 python -c "import serial; serial.Serial('COM3').write(b'boot\r')"
-STM32_Programmer_CLI -c port=usb1 -w LUC_0306.bin 0x08000000 -v -g 0x08000000
+STM32_Programmer_CLI -c port=usb1 -w LUC_0307.bin 0x08000000 -v -g 0x08000000
 ```
 
 ---
@@ -184,6 +184,12 @@ LUC_MASTER_PORT=COM56 LUC_SLAVE_PORT=COM3 PYTHONPATH=. pytest tests -v
 ```
 
 On Windows PowerShell set the variables with `$env:LUC_MASTER_PORT="COM3"` etc.
+
+### How firmware 3.7 was tested
+
+- Same setup, both converters flashed with `LUC_0307.bin`.
+- Slave fix traced byte by byte with a diagnostic build: when the slave subscribed a frame nobody answered, the next header's break byte was counted as that frame's data, and the stale count made the slave take the following frame's last data byte as its checksum and drop it. With the fix the slave receives every following frame (23 of 23 in 1.5 s, before 0).
+- New regression test `test_slave_subscribed_to_unanswered_header_keeps_next_frame`; full suite run twice with the roles swapped: **65/65 passed** in each direction.
 
 ### How firmware 3.6 was tested
 

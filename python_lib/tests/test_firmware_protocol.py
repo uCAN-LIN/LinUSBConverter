@@ -197,6 +197,18 @@ def test_unanswered_header_does_not_stall_schedule(pair, speed):
 
 
 @pytest.mark.parametrize("speed", SPEEDS)
+def test_slave_subscribed_to_unanswered_header_keeps_next_frame(pair, speed):
+    """The slave subscribes 0x04, which nobody answers. The next header's break used to be
+    counted as 0x04 data and the stale count lost the following frame (fixed in 3.7)."""
+    m, s = pair
+    start_bus(m, s, speed, ["t0014" + payload(1, 4), "r0044"], ["r0014", "r0044"])
+    (_, _), (sf, sjunk) = run_for(m, s, 2)
+    assert not sjunk
+    assert set(sf.get(0x01, [])) == {payload(1, 4)}
+    assert len(sf[0x01]) >= 5
+
+
+@pytest.mark.parametrize("speed", SPEEDS)
 def test_extended_row_format_period(pair, speed):
     """'T'/'R' rows with explicit period 0x64 (100 ms) and timeout 0x30 ms."""
     m, s = pair

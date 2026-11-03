@@ -62,6 +62,10 @@ void open_lin_slave_rx_header(l_u8 rx_byte)
 		} else {
 			/* do nothing, go to SYNC rx anyway*/
 		}
+		/* A break starts a new frame. If the previous header was not answered,
+		 * the break's 0x00 byte was already counted as its data, so the count
+		 * must start over or the next frame's checksum is taken from its data. */
+		open_lin_slave_state_data_count = 0;
         #ifdef OPEN_LIN_HW_BREAK_IS_SYNCH_BYTE
         open_lin_slave_state = OPEN_LIN_SLAVE_PID_RX;
         #else
