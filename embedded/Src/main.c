@@ -115,7 +115,20 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-
+  /* The board has no crystal: HSI48 clocks the CPU, USB and the LIN UART.
+   * Let the Clock Recovery System trim it to the host's 1 ms USB SOF, so the
+   * LIN baud rate and slot timing hold over temperature like a crystal. */
+  {
+    RCC_CRSInitTypeDef crs;
+    __HAL_RCC_CRS_CLK_ENABLE();
+    crs.Prescaler = RCC_CRS_SYNC_DIV1;
+    crs.Source = RCC_CRS_SYNC_SOURCE_USB;
+    crs.Polarity = RCC_CRS_SYNC_POLARITY_RISING;
+    crs.ReloadValue = __HAL_RCC_CRS_RELOADVALUE_CALCULATE(48000000U, 1000U);
+    crs.ErrorLimitValue = RCC_CRS_ERRORLIMIT_DEFAULT;
+    crs.HSI48CalibrationValue = RCC_CRS_HSI48CALIBRATION_DEFAULT;
+    HAL_RCCEx_CRSConfig(&crs);
+  }
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */

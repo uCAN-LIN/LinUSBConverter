@@ -157,7 +157,7 @@ With STM32CubeProgrammer installed, the flashing can be scripted:
 
 ```bash
 python -c "import serial; serial.Serial('COM3').write(b'boot\r')"
-STM32_Programmer_CLI -c port=usb1 -w LUC_0305.bin 0x08000000 -v -g 0x08000000
+STM32_Programmer_CLI -c port=usb1 -w LUC_0306.bin 0x08000000 -v -g 0x08000000
 ```
 
 ---
@@ -184,6 +184,12 @@ LUC_MASTER_PORT=COM56 LUC_SLAVE_PORT=COM3 PYTHONPATH=. pytest tests -v
 ```
 
 On Windows PowerShell set the variables with `$env:LUC_MASTER_PORT="COM3"` etc.
+
+### How firmware 3.6 was tested
+
+- Same setup, both converters flashed with `LUC_0306.bin`.
+- Clock recovery checked with a test-only build that reported the CRS registers: the CRS synchronised to the USB SOF within the first seconds (SYNCOK set, no errors afterwards) and moved the HSI48 trim from 32 to 35 on one converter, i.e. that converter's clock ran measurably slow without it.
+- Full suite run twice with the roles swapped: **63/63 passed** in each direction; master slot periods unchanged from 3.4 (within about 1 ms of the configured delay).
 
 ### How firmware 3.5 was tested
 
