@@ -91,10 +91,12 @@
   * @{
   */
 
-#define USBD_VID     1155
+/* VID/PID from pid.codes for open source hardware: https://pid.codes/1209/2779/
+ * (firmware before 3.5 used ST's generic virtual COM port ID 0483:5740) */
+#define USBD_VID     0x1209
 #define USBD_LANGID_STRING     1033
 #define USBD_MANUFACTURER_STRING     "uCAN"
-#define USBD_PID_FS     22336
+#define USBD_PID_FS     0x2779
 #define USBD_PRODUCT_STRING_FS     "LinUSBConverter"
 #define USBD_SERIALNUMBER_STRING_FS     "00000000001A"
 #define USBD_CONFIGURATION_STRING_FS     "CDC Config"

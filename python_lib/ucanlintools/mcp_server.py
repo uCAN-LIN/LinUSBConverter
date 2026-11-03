@@ -38,7 +38,8 @@ import serial.tools.list_ports
 from mcp.server.mcpserver import MCPServer
 from mcp.server.mcpserver.exceptions import ToolError
 
-USB_VID, USB_PID = 0x0483, 0x5740
+# pid.codes ID since firmware 3.5; ST's generic virtual COM port ID before that
+USB_IDS = {(0x1209, 0x2779), (0x0483, 0x5740)}
 MAX_DURATION_S = 60.0
 MAX_CHANGES = 200
 MAX_TABLE = 15                 # firmware schedule slots
@@ -136,9 +137,9 @@ class Converter:
         port = self.port
         if port is None:
             found = [p.device for p in serial.tools.list_ports.comports()
-                     if (p.vid, p.pid) == (USB_VID, USB_PID)]
+                     if (p.vid, p.pid) in USB_IDS]
             if not found:
-                raise ToolError("no LIN converter found (USB 0483:5740). Plug it in "
+                raise ToolError("no LIN converter found (USB 1209:2779 or 0483:5740). Plug it in "
                                 "or start the server with --port.")
             if len(found) > 1:
                 raise ToolError(f"several possible converters: {', '.join(found)}. "

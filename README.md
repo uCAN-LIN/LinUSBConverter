@@ -49,7 +49,7 @@ The LIN protocol implementation is based on [openLIN](https://github.com/open-LI
 ## Quickstart
 
 1. Plug the device into a USB port. It enumerates as a virtual COM port (`COM3` on Windows, `/dev/ttyACM0` on Linux, `/dev/cu.usbmodem*` on macOS).
-2. On Windows, install the [ST Virtual COM Port driver](https://www.st.com/en/development-tools/stsw-stm32102.html). On Linux and macOS no driver is required.
+2. No driver is needed on Windows 10/11, Linux or macOS: the built-in USB CDC driver is used. Since firmware 3.5 the device has its own USB ID from [pid.codes](https://pid.codes/1209/2779/), `1209:2779`; older firmware used ST's generic `0483:5740` (on Windows 7/8 that needs the [ST Virtual COM Port driver](https://www.st.com/en/development-tools/stsw-stm32102.html)).
 3. Open the port at any baud rate (USB CDC ignores baud). Line ending must be CR (`0x0D`).
 4. Power the LIN side with 4.5 - 28 V on the external supply pin.
 5. Send `S0` to select 19200 baud, then `l` to enter monitor mode. Bus traffic will start to appear.
@@ -157,7 +157,7 @@ With STM32CubeProgrammer installed, the flashing can be scripted:
 
 ```bash
 python -c "import serial; serial.Serial('COM3').write(b'boot\r')"
-STM32_Programmer_CLI -c port=usb1 -w LUC_0304.bin 0x08000000 -v -g 0x08000000
+STM32_Programmer_CLI -c port=usb1 -w LUC_0305.bin 0x08000000 -v -g 0x08000000
 ```
 
 ---
@@ -184,6 +184,11 @@ LUC_MASTER_PORT=COM56 LUC_SLAVE_PORT=COM3 PYTHONPATH=. pytest tests -v
 ```
 
 On Windows PowerShell set the variables with `$env:LUC_MASTER_PORT="COM3"` etc.
+
+### How firmware 3.5 was tested
+
+- Same setup, both converters flashed with `LUC_0305.bin`. They enumerate as `1209:2779` and Windows 10 loads its built-in CDC driver without any installation.
+- Full suite run twice with the roles swapped: **55/55 passed** in each direction. Firmware 3.5 changes only the USB ID, the LIN code is the same as 3.4.
 
 ### How firmware 3.4 was tested
 

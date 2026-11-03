@@ -7,7 +7,8 @@ working with LIN Description Files (LDF). It lets a PC act as a LIN **master**,
 encode/decode signals described in an LDF.
 
 It works on Windows, Linux and macOS. The converter enumerates as a USB CDC
-virtual serial port (STMicroelectronics VID `0483` / PID `5740`).
+virtual serial port: VID `1209` / PID `2779` ([pid.codes](https://pid.codes/1209/2779/))
+since firmware 3.5, STMicroelectronics VID `0483` / PID `5740` before.
 
 ---
 
