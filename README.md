@@ -5,7 +5,7 @@
 [![Product page](https://img.shields.io/badge/docs-ucandevices.github.io-1f6feb)](https://ucandevices.github.io/ulc.html)
 [![CI](https://github.com/uCAN-LIN/LinUSBConverter/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/uCAN-LIN/LinUSBConverter/actions/workflows/ci.yml)
 
-> **Open source USB ↔ LIN bus dongle. LIN 2.1 master, slave or monitor. SLCAN-compatible virtual COM port - works on Windows, Linux and macOS with no proprietary drivers.**
+> **Open source USB ↔ LIN bus dongle. LIN 2.2A master, slave or monitor. SLCAN-compatible virtual COM port - works on Windows, Linux and macOS with no proprietary drivers.**
 
 <p align="center">
   <img src="https://ucandevices.github.io/img/products/ulc.webp" alt="USB LIN Converter (uLC) - dongle photo" width="60%">
@@ -21,7 +21,7 @@ The LIN protocol implementation is based on [openLIN](https://github.com/open-LI
 
 ## Features
 
-- LIN 2.1 support
+- LIN 2.2A support (also works with LIN 2.1 and 2.0 nodes, and with LIN 1.3 nodes using classic checksum)
 - **Monitor mode** - full frame reception plus single-frame transmission
 - **Master mode** - up to 16 scheduled frame slots
 - **Slave mode** - up to 16 scheduled frame slots for slave simulation
@@ -158,7 +158,7 @@ With STM32CubeProgrammer installed, the flashing can be scripted:
 
 ```bash
 python -c "import serial; serial.Serial('COM3').write(b'boot\r')"
-STM32_Programmer_CLI -c port=usb1 -w LUC_0308.bin 0x08000000 -v -g 0x08000000
+STM32_Programmer_CLI -c port=usb1 -w LUC_0309.bin 0x08000000 -v -g 0x08000000
 ```
 
 ---
@@ -171,7 +171,7 @@ The test suite lives in [`python_lib/tests`](python_lib/tests) (pytest). It cove
 |---|---|---|
 | `test_ldf_parser.py`, `test_linframe.py`, `test_luc_encoding.py` | none | LDF parsing, signal encode/decode, frame formatting |
 | `test_luc_hardware.py` | 1-2 dongles | Library: version query, mode switching, monitor loopback, master → slave |
-| `test_firmware_protocol.py` | 1-2 dongles | Firmware over raw serial: malformed-command rejection, 16-row table limit, all frame lengths 1-8 in both directions with exact data check, live data update, diagnostic frames 0x3C/0x3D, unanswered headers, extended `T`/`R` row timing, custom baud rate, monitor reception (including back-to-back frames) and monitor transmit. Parametrized for 19200 and 9600 baud. |
+| `test_firmware_protocol.py` | 1-2 dongles | Firmware over raw serial: malformed-command rejection, 16-row table limit, all frame lengths 1-8 in both directions with exact data check, live data update, diagnostic frames 0x3C/0x3D, unanswered headers, extended `T`/`R` row timing, custom baud rate, monitor reception (including back-to-back frames), monitor transmit, and headers with a wrong PID parity (made with a baud-rate offset) ignored by slave and monitor. Parametrized for 19200 and 9600 baud. |
 | `test_lib_simulation.py` | 2 dongles | Scripted `MasterSimulation.py` / `SlaveSimulation.py`: LDF-encoded master frame, slave response, both changing at runtime, at both speeds |
 
 **Setup:** two converters on one LIN bus (LIN pins connected, external LIN supply applied). `LUC_MASTER_PORT` is used as LIN master, `LUC_SLAVE_PORT` as slave / monitor. Tests skip automatically when a port can't be opened, so the offline tests always run.
@@ -185,6 +185,18 @@ LUC_MASTER_PORT=COM56 LUC_SLAVE_PORT=COM3 PYTHONPATH=. pytest tests -v
 ```
 
 On Windows PowerShell set the variables with `$env:LUC_MASTER_PORT="COM3"` etc.
+
+### How firmware 3.9 was tested
+
+- Same setup, both converters flashed with `LUC_0309.bin`.
+- PID parity fix: a header whose protected ID failed the parity check was still handled with the ID of the previous frame. In slave mode the converter answered it if that previous ID was a publish slot. In monitor mode it reported the frame under the previous ID when classic checksum was used. LIN 2.2A requires such a header to be ignored, and now it is.
+- The converters always send a correct parity, so the bad header is made with a baud-rate offset. The receiving side runs about 6-7 % off and reads bit 7 of each byte from the neighbouring bit. That corrupts the parity bit of a chosen PID while other PIDs and the data bytes (C0 C0 C0 C0, classic checksum FC) still read correctly.
+  - Monitor at 20557 baud, master at 19200: 3.8 reported the bad 0x05 header 71 times in 2 s as 0x01 without data; 3.9 reports it 0 times.
+  - Master at 20330 baud, slave at 19200: the 3.8 slave answered the bad 0x03 header 72 times in 2 s with the data of 0x01; the 3.9 slave stays silent.
+  - With both sides at 19200 (control) the results are the same on 3.8 and 3.9.
+- New regression tests `test_monitor_ignores_header_with_bad_parity` and `test_slave_ignores_header_with_bad_parity` (both fail on 3.8, pass on 3.9). Full suite run twice with the roles swapped: **68/68 passed** in each direction.
+- The slave and monitor code was also compiled with gcc on the PC and fed bytes directly: 3.8 failed 3 checks, 3.9 passes all of them.
+- The image is 12 bytes smaller than 3.8.
 
 ### How firmware 3.8 was tested
 
@@ -237,7 +249,7 @@ Yes - monitor (full reception plus single-frame transmission), master (up to 16 
 Yes. The LIN transceiver is optically isolated from the PC side, protecting the host from automotive transients. The LIN side needs an external 4.5 - 28 V supply since USB only powers the MCU.
 
 **Which LIN baud rates and LIN version are supported?**
-LIN 2.1, with selectable 9600 and 19200 baud. Classic and enhanced checksum are switchable with the `r31` / `r30` commands (firmware 3.3 and later). Custom frame timing is supported in master mode.
+LIN 2.2A, with selectable 9600 and 19200 baud. LIN 2.2 and 2.2A only clarify LIN 2.1 (errata, bit sampling, wake-up wording), with no change to frames, so LIN 2.1 and 2.0 nodes work the same way. Classic and enhanced checksum are switchable with the `r31` / `r30` commands (firmware 3.3 and later). Custom frame timing is supported in master mode.
 
 **Can I use it to flash an ECU over LIN?**
 It is a generic LIN interface. ECU flashing depends entirely on the target ECU's own LIN bootloader; if that bootloader is documented or already supported by an existing tool, you can drive it through this dongle.

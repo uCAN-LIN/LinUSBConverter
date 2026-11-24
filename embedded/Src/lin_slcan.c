@@ -247,7 +247,10 @@ void lin_slcan_rx(l_u8 rx_byte)
 					open_lin_data_layer_frame.data_ptr = slcan_lin_data_array;
 				} else
 				{
+					/* Skip the response: the ID of the previous frame is still
+					 * stored and the frame would be reported under it. */
 					lin_slcan_reset();
+					break;
 				}
 				slcan_lin_slave_state = OPEN_LIN_SLAVE_DATA_RX;
 				// slcan_lin_timeout handled in sys timer interrupt function

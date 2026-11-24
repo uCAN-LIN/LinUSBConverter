@@ -100,6 +100,9 @@ void open_lin_slave_rx_header(l_u8 rx_byte)
 				{
 					open_lin_error_handler(OPEN_LIN_SLAVE_ERROR_PID_PARITY);
 					open_lin_slave_reset();
+					/* Do not answer: the ID of the previous frame is still stored,
+					 * so looking up a slot here would respond to the wrong header. */
+					break;
 				}
 
 				if (open_lin_slave_set_lin_frame(&open_lin_data_layer_frame) == true)

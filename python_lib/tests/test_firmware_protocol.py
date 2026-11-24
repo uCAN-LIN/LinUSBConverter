@@ -336,3 +336,62 @@ def test_monitor_reports_back_to_back_frames(pair):
     time.sleep(0.2)
     f, _ = frames(mon.drain())
     assert f.get(0x22) == [f"{i:02X}" for i in range(32)]
+
+
+# --------------------------------------------------------------------------- #
+# Two dongles: header with a wrong PID parity
+#
+# The converters always send a correct parity, so one side runs at a slightly
+# different baud rate and reads bit 7 of each byte from the neighbouring bit.
+# Classic checksum and data bytes C0 C0 C0 C0 (checksum FC, bit 7 = bit 6 = 1)
+# read correctly either way; only the chosen PID gets a wrong parity bit.
+# --------------------------------------------------------------------------- #
+BAD_PARITY_DATA = "C0C0C0C0"
+
+
+def test_monitor_ignores_header_with_bad_parity(pair):
+    """Monitor ~7 % fast (20557 baud): it reads bit 7 from bit 6, so PID 0x85
+    (id 0x05, P1=1 P0=0) arrives as 0x05, a parity error, while PID 0xC1 (id 0x01)
+    still reads correctly. Firmware 3.8 reported the bad header as id 0x01."""
+    m, mon = pair
+    assert ack(mon.cmd("t04504D")) == [b"Z"]
+    mon.cmd("l")
+    mon.cmd("r31")
+    m.cmd("S1")
+    m.cmd("O")
+    m.cmd("r31")
+    assert_acked(m.cmd("t0014" + BAD_PARITY_DATA), m.cmd("r0054"))
+    mon.drain()
+    m.start()
+    time.sleep(2)
+    f, _ = frames(mon.drain())
+    mon.cmd("S1")
+    # a bad header reported under the previous id would show up as 0x01 without data
+    assert len(f.get(0x01, [])) >= 20 and set(f[0x01]) == {BAD_PARITY_DATA}
+    # 0x01 and 0x05 alternate. Depending on each dongle's clock some 0x85 PIDs
+    # still get through intact (then correctly reported as 0x05); at least 10
+    # must have been corrupted, or this test checks nothing.
+    assert len(f.get(0x05, [])) <= len(f[0x01]) - 10
+
+
+def test_slave_ignores_header_with_bad_parity(pair):
+    """Master ~6 % fast (20400 baud): the slave reads bit 7 from the stop bit, so
+    PID 0x03 (id 0x03, P1=0) arrives as 0x83, a parity error, while PID 0xC1
+    (id 0x01) still reads correctly. Firmware 3.8 answered the bad header with
+    the data of id 0x01."""
+    m, s = pair
+    s.cmd("S1")
+    s.cmd("L")
+    s.cmd("r31")
+    assert_acked(s.cmd("t0014" + BAD_PARITY_DATA))
+    assert ack(m.cmd("t044FB0")) == [b"Z"]
+    m.cmd("O")
+    m.cmd("r31")
+    assert_acked(m.cmd("r0014"), m.cmd("r0034"))
+    s.start()
+    m.start()
+    time.sleep(2)
+    f, _ = frames(m.drain())
+    m.cmd("S1")
+    assert len(f.get(0x01, [])) >= 20 and set(f[0x01]) == {BAD_PARITY_DATA}
+    assert 0x03 not in f
