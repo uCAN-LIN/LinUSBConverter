@@ -27,7 +27,7 @@ The LIN protocol implementation is based on [openLIN](https://github.com/open-LI
 - **Slave mode** - up to 16 scheduled frame slots for slave simulation
 - 9600 / 19200 baud rate selection
 - **Optical isolation** between LIN and the USB / PC side
-- Software-controlled termination resistors
+- 1 kΩ LIN master termination, connected with solder jumper J3 or a jumper on header J5 (close it when the converter is the bus master)
 - External 4.5 - 28 V powers the LIN transceiver
 - Device size 31 × 18 mm (without USB connector)
 - USB DFU bootloader for firmware updates
